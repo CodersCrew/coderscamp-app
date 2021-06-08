@@ -1,4 +1,4 @@
-import React, { createRef, useState } from 'react'
+import React, { createRef, useRef, useState } from 'react'
 import styles from './SearchInput.module.css'
 import {
   InputAdornment,
@@ -16,23 +16,25 @@ export interface SearchInputProps {
 
 const SearchInput: React.FC<SearchInputProps> = ({ placeholder, onSubmit }) => {
   const [value, setValue] = useState('')
-  const inputRef = createRef<HTMLInputElement>()
+  const inputRef = useRef<HTMLInputElement>()
   const handleSubmit: React.MouseEventHandler = () => {
     if (inputRef.current) setValue(inputRef.current.value)
   }
-  const onKeyPress: React.KeyboardEventHandler = (e) => {
-    if (e.key === 'Enter' && inputRef.current) setValue(inputRef.current.value)
+  const search = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(e.target.value)
   }
+  //FIXME: Tutaj wywoływana jest funkcja do wyszukiwania
   useDidUpdateEffect(() => {
+    console.log(value)
     onSubmit(value)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value])
+
   return (
     <FormControl variant="outlined" className={styles.searchInput}>
       <OutlinedInput
-        inputRef={inputRef}
+        value={value}
         placeholder={placeholder}
-        onKeyPress={onKeyPress}
+        onChange={search}
         startAdornment={
           <InputAdornment position="start">
             <SearchRounded />

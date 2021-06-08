@@ -7,8 +7,12 @@ export default function useDidUpdateEffect(
   const didMountRef = useRef(false)
 
   useEffect(() => {
-    if (didMountRef.current) fn()
-    else didMountRef.current = true
+    if (didMountRef.current) {
+      fn()
+      return;
+    } else {
+      didMountRef.current = true
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, inputs)
 }
