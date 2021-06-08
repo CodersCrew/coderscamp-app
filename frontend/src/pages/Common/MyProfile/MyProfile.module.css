@@ -77,6 +77,12 @@
   color: #3cc13b;
 }
 
+.status_radio_button__gray {
+  background: #1c1c1c;
+  border: rgba(142, 144, 142, 0.75) 1px solid;
+  color: #d6d2d2;
+}
+
 #buttonEdit,
 #buttonEditPassword,
 #buttonAbort,

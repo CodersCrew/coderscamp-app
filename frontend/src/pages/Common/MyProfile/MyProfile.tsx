@@ -170,5 +170,8 @@ const PermissionLabel = (props: any) => {
     )
   else if (props.type === 2)
     return <label className={styles.status_radio_button__red}>Mentor</label>
-  else return <label className={styles.status_radio_button__green}>Admin</label>
+  else if (props.type === 3)
+    return <label className={styles.status_radio_button__green}>Admin</label>
+  else
+    return <label className={styles.status_radio_button__gray}>Candidate</label>
 }
