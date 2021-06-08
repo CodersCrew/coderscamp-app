@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { AxiosResponse } from 'axios'
 import { setActiveCourse } from '../../Admin/CourseList/CourseListSlice'
@@ -10,6 +10,7 @@ import {
   Grid,
   Typography,
   Container,
+  CircularProgress,
 } from '@material-ui/core'
 import StyledTextField from '../../../components/StyledTextField'
 import useStyles from './LogIn.style'
@@ -22,42 +23,69 @@ export interface LogInProps {
   onLogin?: Function
 }
 
-export default function SignIn(props: LogInProps) {
+export default function SignIn({ onLogin }: LogInProps) {
   const classes = useStyles()
   const appDispatch = useAppDispatch()
   const { showError } = useSnackbar()
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [form, setForm] = useState({ email: '', password: '' })
+  const [invalidEmail, setInvalidEmail] = useState(false)
+  const [invalidPasswd, setInvalidPasswd] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const history = useHistory()
   const routeChange = () => {
-    let path = `/home`
+    const path = '/home'
     history.push(path)
   }
 
-  const setResponseDataToLocalStorage = (response: AxiosResponse) => {
-    const userId = response.data?.['_id']
-    const userType = response.data?.['type']
+  const setResponseDataToLocalStorage = ({ data }: AxiosResponse) => {
+    const userId = data?.['_id']
+    const userType = data?.['type']
 
     localStorage.setItem('id', userId)
     localStorage.setItem('type', userType)
   }
 
-  const handleSignInClick = async () => {
+  const validateForm = () => {
+    const validEmailLength = !!form.email.length
+    setInvalidEmail(!validEmailLength)
+
+    const validPasswordLength = !!form.password.length
+    setInvalidPasswd(!validPasswordLength)
+
+    return validEmailLength && validPasswordLength
+  }
+
+  const handleFormChange = (e: any) => {
+    setForm((prevState) => ({ ...prevState, [e.target.name]: e.target.value }))
+  }
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault()
+
+    if (!validateForm()) return
+
+    setLoading(true)
     try {
-      const response = await api.post('login', { email, password })
+      const response = await api.post('login', form)
       setResponseDataToLocalStorage(response)
       const courses = await fetchCoursesAndSort()
       const mostRecentCourse = courses[0]
       appDispatch(setActiveCourse(mostRecentCourse))
       routeChange()
-      if (props.onLogin) props.onLogin()
+      if (onLogin) onLogin()
     } catch (error) {
       showError(
         error?.response?.data?.message ?? 'Error while trying to sign in',
       )
     }
+    setLoading(false)
   }
+
+  useEffect(() => {
+    if (invalidEmail || invalidPasswd) validateForm()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form])
 
   return (
     <div>
@@ -68,16 +96,18 @@ export default function SignIn(props: LogInProps) {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} onSubmit={handleSubmit} noValidate>
             <StyledTextField
               margin="normal"
               label="Email Address"
               name="email"
               autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={form.email}
+              onChange={handleFormChange}
               autoFocus
               data-testid="li-email"
+              error={invalidEmail}
+              helperText={invalidEmail && 'Email address is required!'}
             />
             <StyledTextField
               margin="normal"
@@ -85,21 +115,26 @@ export default function SignIn(props: LogInProps) {
               label="Password"
               type="password"
               autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={form.password}
+              onChange={handleFormChange}
               data-testid="li-password"
+              error={invalidPasswd}
+              helperText={invalidPasswd && 'Pasword is required!'}
             />
-            <Button
-              type="button"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-              onClick={handleSignInClick}
-              data-testid="li-button"
-            >
-              Sign In
-            </Button>
+            {!loading ? (
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                data-testid="li-button"
+              >
+                Sign In
+              </Button>
+            ) : (
+              <CircularProgress color="primary" className={classes.submit} />
+            )}
             <Grid container>
               <Grid item xs>
                 <Link href="/resetpassword" variant="body2" color="inherit">
