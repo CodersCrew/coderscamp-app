@@ -44,7 +44,7 @@ const ManageUsers: React.FC<ManageUsersProps> = () => {
   const changeSortBy = (value: string) => {
     sortUsers(value as keyof User)
   }
-  //TODO: Zmień regex by wyszukiwał najpierw surname
+
   const changeSearch = (searchTerm: string) => {
     const column = /([-.,&_`() ]|[a-zA-Z0-9]|[À-Ö]|[Ø-ö]|[ø-ǿ]|[Ȁ-ʯ]|[̀-ͯ]|[Ḁ-ỿ]|[Ⅰ-ↈ])+/i.test(
       searchTerm,

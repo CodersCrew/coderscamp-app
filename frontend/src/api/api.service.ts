@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { removeUserFromLocalStorage } from '../app/utils'
 
-axios.defaults.baseURL = 'http://localhost:3001/api/';
+axios.defaults.baseURL = process.env.REACT_APP_API_URL + '/api/'
 axios.defaults.headers.common = {
   'x-auth-token': localStorage.getItem('token'),
 }
