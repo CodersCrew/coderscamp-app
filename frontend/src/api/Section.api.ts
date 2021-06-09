@@ -95,7 +95,8 @@ export const getSection = async (id: string): Promise<Section | null> => {
   }
 }
 
-export const getOneSection = async (id: string): Promise<ManageSection> => {
+export const getOneSection = async (id: string): Promise<ManageSection | null> => {
+  if(!id) return null
   const section = (await api.get(`/sections/${id}`)).data as ManageSectionData
   let course = null
   if (section.course) {
