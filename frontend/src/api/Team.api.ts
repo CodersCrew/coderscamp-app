@@ -109,8 +109,8 @@ export const deleteUserFromTeam = async (teamId: string, userId: string) => {
   await api.delete(`teams/${teamId}/users/${userId}`)
 }
 
-export const createTeam = async (courseId?: string) => {
-  await api.post('/teams', { course: courseId ?? null })
+export const createTeam = async ({courseId, mentorId,}: {courseId: string; mentorId: string}) => {
+  await api.post('/teams', { course: courseId ?? null, mentor: mentorId })
 }
 
 export const deleteTeam = async (id: string) => {

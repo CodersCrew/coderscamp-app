@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './ManageTeam.module.css'
 import AddButton from '../../../components/AddButton'
 import UButton from '../../../components/UButton'
 import ReusableTable from '../../../components/ReusableTable'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Container, Paper } from '@material-ui/core'
 import { User } from '../../../models'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
 import { useParams } from 'react-router-dom'
@@ -26,7 +26,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
   const [openMentorsModal, setOpenMentorsModal] = useState<boolean>(false)
   const [openUsersModal, setOpenUsersModal] = useState<boolean>(false)
 
-  const selectedUsers = useRef<string[]>([])
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
 
   let { teamId } = useParams<{ teamId: string }>()
   const { data: team, isLoading, isFetching, error } = useTeam(teamId)
@@ -63,14 +63,14 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
   ]
 
   const handleUserSelection = (params: GridSelectionModelChangeParams) => {
-    selectedUsers.current = params.selectionModel as string[]
+    setSelectedUsers(params.selectionModel as string[])
   }
 
   const deleteSelectedUsers = () => {
-    selectedUsers.current.forEach((user) => {
+    selectedUsers.forEach((user) => {
       deleteUserFromTeam([teamId, user])
     })
-    selectedUsers.current = []
+    setSelectedUsers([])
   }
 
   const mentorColumns = [
@@ -91,7 +91,6 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
 
   return (
     <Container className={styles.manageTeams} aria-label="Manage Teams">
-      <CssBaseline />
       <PageHeader>
         <ReusableGoBack
           pageName="Teams"
@@ -112,7 +111,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
             <FindModal<User>
               onRowSelection={handleMentorSelection}
               query={mentorsQuery}
-              queryKey='Mentors'
+              queryKey="Mentors"
               columns={mentorColumns}
               searchPlaceholder="Search by surname"
               searchBy="surname"
@@ -166,7 +165,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
               onClick={() => setOpenUsersModal(true)}
             />
             <DeleteButton
-              confirmTitle={`Are you sure you want to delete selected (${selectedUsers.current.length}) users?`}
+              confirmTitle={`Are you sure you want to delete selected (${selectedUsers.length}) users?`}
               onConfirm={deleteSelectedUsers}
             />
           </div>
