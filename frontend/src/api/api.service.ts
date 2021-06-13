@@ -35,7 +35,7 @@ axios.interceptors.response.use(
           } else if (cookie?.token) {
             return _redirect()
           }
-          break
+          return Promise.reject(error)
         default:
           return Promise.reject(error)
       }
