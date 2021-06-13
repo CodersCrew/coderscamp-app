@@ -1,12 +1,17 @@
+import { AxiosError } from 'axios'
 import { MutationFunction, useMutation, useQueryClient } from 'react-query'
 import useSnackbar from './useSnackbar'
 
-export interface Options<T, R> {
+export interface Options<T, R, D> {
   successMessage?: string
-  onSuccess?: () => void
+  onSuccess?: (data: D, variables: R) => void
   errorMessage?: string
-  onError?: () => void
-  onSettled?: () => void
+  onError?: (error: AxiosError, variables: R) => void
+  onSettled?: (
+    data: D | undefined,
+    error: AxiosError | null,
+    variables: R,
+  ) => void
   invalidate: string | string[]
   newData?: (reqParam: R, previousData: T) => T
 }
@@ -20,13 +25,13 @@ const useMutationWithConfirm = <T, R, D>(
     onError,
     onSettled,
     newData,
-  }: Options<D, R>,
+  }: Options<D, R, T>,
 ) => {
   const { showError, showSuccess } = useSnackbar()
   const queryClient = useQueryClient()
   const mutation = useMutation(request, {
     // When mutate is called:
-    onMutate: async (reqParam: R) => {
+    onMutate: async (reqParam) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
       await queryClient.cancelQueries(invalidate)
 
@@ -40,19 +45,19 @@ const useMutationWithConfirm = <T, R, D>(
 
       return { previousData }
     },
-    onSuccess: () => {
+    onSuccess: (newData, variables) => {
       invalidate && queryClient.invalidateQueries(invalidate)
       successMessage && showSuccess(successMessage)
-      onSuccess && onSuccess()
+      onSuccess && onSuccess(newData, variables)
     },
-    onError: () => {
-      errorMessage && showError(errorMessage)
-      onError && onError()
+    onError: (error: AxiosError, variables) => {
+      errorMessage && showError(error?.response?.data?.error || errorMessage)
+      onError && onError(error, variables)
     },
     // Always refetch after error or success:
-    onSettled: () => {
+    onSettled: (data, error, variables) => {
       invalidate && queryClient.invalidateQueries(invalidate)
-      onSettled && onSettled()
+      onSettled && onSettled(data, error, variables)
     },
   })
   return mutation

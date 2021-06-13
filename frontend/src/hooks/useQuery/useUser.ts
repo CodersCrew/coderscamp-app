@@ -2,6 +2,7 @@ import * as api from '../../api/User.api'
 import useMutationWithConfirm, { Options } from '../useMutationWithConfirm'
 import { IUser, User } from '../../models'
 import { useQuery, UseQueryOptions } from 'react-query'
+import { AxiosResponse } from 'axios'
 
 const queryKey = 'user'
 
@@ -15,7 +16,7 @@ export const useUserProfile = (options?: Partial<UseQueryOptions<IUser>>) =>
   useQuery([queryKey, 'myProfile'], () => api.fetchUserProfile(), options)
 
 export const useUpdateUser = (
-  options?: Partial<Options<User, [string, IUser]>>,
+  options?: Partial<Options<User, [string, IUser], AxiosResponse<IUser>>>,
 ) =>
   useMutationWithConfirm(
     ([id, user]: [string, IUser]) => api.updateUser(id, user),
@@ -25,7 +26,9 @@ export const useUpdateUser = (
     },
   )
 
-export const useDeleteUser = (options?: Partial<Options<User[], string>>) =>
+export const useDeleteUser = (
+  options?: Partial<Options<User[], string, AxiosResponse<IUser>>>,
+) =>
   useMutationWithConfirm(api.deleteUser, {
     invalidate: queryKey + 's',
     ...options,
