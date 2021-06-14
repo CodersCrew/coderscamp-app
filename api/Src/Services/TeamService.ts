@@ -55,6 +55,13 @@ class TeamService {
     return this.teamRepository.addUserToTeam(teamId, userId)
   }
 
+  async addUsersToTeam(
+    teamId: mongoose.Types.ObjectId,
+    usersIds: Array<mongoose.Types.ObjectId>,
+  ) {
+    return this.teamRepository.addUsersToTeam(teamId, usersIds)
+  }
+
   async addMentorToTeam(
     teamId: mongoose.Types.ObjectId,
     mentorId: mongoose.Types.ObjectId,

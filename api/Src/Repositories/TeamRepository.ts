@@ -39,6 +39,19 @@ export default class TeamRepository extends Repository {
     return await this.updateById(teamId, updateQuery)
   }
 
+  async addUsersToTeam(
+    teamId: mongoose.Types.ObjectId,
+    usersIds: Array<mongoose.Types.ObjectId>,
+  ) {
+
+    const updateQuery = {
+      $push: {
+        users: { $each: usersIds }
+      },
+    }
+    return await this.updateById(teamId, updateQuery)
+  }
+
   async deleteUserFromTeam(
     teamId: mongoose.Types.ObjectId,
     userId: mongoose.Types.ObjectId,
