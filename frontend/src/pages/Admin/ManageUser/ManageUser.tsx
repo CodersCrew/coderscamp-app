@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory, useParams } from 'react-router-dom'
 import { Box, CircularProgress } from '@material-ui/core'
-import { mainTheme } from '../../../theme/customMaterialTheme'
-import { ThemeProvider } from '@material-ui/styles'
 
-import { convertUserToIUser, IUser, userStatusDict, userTypeDict } from '../../../models/User.model'
+import {
+  convertUserToIUser,
+  IUser,
+  userStatusDict,
+  userTypeDict,
+} from '../../../models/User.model'
 import { UserStatus as Status } from '../../../models/User.model'
 import { UserType as Role } from '../../../models/User.model'
 import ManageGrades from '../ManageGrades'
@@ -15,6 +18,7 @@ import ReusableGoBack from '../../../components/ReusableGoBack'
 import PageHeader from '../../../components/PageHeader'
 import { useDeleteUser, useUpdateUser, useUser } from '../../../hooks'
 import useSnackbar from '../../../hooks/useSnackbar'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface ManageUserProps {}
 
@@ -25,7 +29,7 @@ const ManageUser: React.FC<ManageUserProps> = (props: any) => {
   const [userToSave, setUserToSave] = useState<IUser | undefined>()
   const { showError } = useSnackbar()
 
-  let { userID } = useParams<{userID: string}>()
+  let { userID } = useParams<{ userID: string }>()
   const { data: user, isLoading, error } = useUser(userID)
   const { mutate: updateUser } = useUpdateUser({
     successMessage: 'User updated correctly!',
@@ -74,7 +78,7 @@ const ManageUser: React.FC<ManageUserProps> = (props: any) => {
   if (isLoading) return <CircularProgress className={styles.loading} />
 
   return (
-    <ThemeProvider theme={mainTheme}>
+    <PageContainer label="Manage User">
       <PageHeader>
         <ReusableGoBack
           pageName="Users"
@@ -257,7 +261,7 @@ const ManageUser: React.FC<ManageUserProps> = (props: any) => {
         </form>
       </Box>
       <ManageGrades userID={userID} />
-    </ThemeProvider>
+    </PageContainer>
   )
 }
 

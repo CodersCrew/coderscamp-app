@@ -4,7 +4,7 @@ import AddButton from '../../../components/AddButton'
 import SelectSortBy from '../../../components/SelectSortBy'
 import SearchInput from '../../../components/SearchInput'
 import ReusableTable from '../../../components/ReusableTable'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
 import { useHistory } from 'react-router-dom'
 import DeleteButton from '../../../components/DeleteButton'
@@ -17,6 +17,8 @@ import {
   useDeleteSheet,
 } from '../../../hooks'
 import { GradeSheet } from '../../../models'
+import { PageContainer } from '../../../components/PageContainer'
+import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageSheetsProps {}
 
@@ -82,8 +84,7 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
   }
 
   return (
-    <Container className={styles.manageSheets} aria-label="Manage Sheets">
-      <CssBaseline />
+    <PageContainer label="Manage Sheets">
       <PageHeader name="Sheets">
         <SearchInput
           onSubmit={changeSearch}
@@ -113,7 +114,7 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
             />
           </span>
         </div>
-        <div className={styles.table}>
+        <TableContainer>
           <ReusableTable
             name={tableName}
             columns={columns}
@@ -125,9 +126,9 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
             onSelectionModelChange={handleSheetSelection}
             checkboxSelection
           />
-        </div>
+        </TableContainer>
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

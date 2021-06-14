@@ -19,6 +19,8 @@ import {
   useUsersOfType,
 } from '../../../hooks'
 import FindModal from '../../../components/FindModal/FindModal'
+import { PageContainer } from '../../../components/PageContainer'
+import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageTeamProps {}
 
@@ -90,7 +92,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
   ]
 
   return (
-    <Container className={styles.manageTeams} aria-label="Manage Teams">
+    <PageContainer label="Manage Teams">
       <PageHeader>
         <ReusableGoBack
           pageName="Teams"
@@ -170,7 +172,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
             />
           </div>
         </div>
-        <div className={styles.table}>
+        <TableContainer>
           <ReusableTable
             aria-label="Team members table"
             name="Team"
@@ -182,11 +184,11 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
             checkboxSelection={true}
             onSelectionModelChange={handleUserSelection}
           />
-        </div>
+        </TableContainer>
         <div className={styles.manageContainer}>
           <h2 className={styles.manageHeader}>Projects</h2>
         </div>
-        <div className={styles.table}>
+        <TableContainer>
           <ReusableTable
             name="TeamProjects"
             columns={projectColumns}
@@ -195,9 +197,9 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
             isFetching={isFetching}
             error={error}
           />
-        </div>
+        </TableContainer>
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

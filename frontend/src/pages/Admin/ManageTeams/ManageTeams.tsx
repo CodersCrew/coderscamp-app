@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Paper } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
 import styles from './ManageTeams.module.css'
 import AddButton from '../../../components/AddButton'
@@ -18,6 +18,8 @@ import {
 } from '../../../hooks'
 import { Team } from '../../../models'
 import { CreateTeam } from '../CreateTeam'
+import { PageContainer } from '../../../components/PageContainer'
+import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageTeamsProps {}
 
@@ -77,7 +79,7 @@ const ManageTeams: FC<ManageTeamsProps> = () => {
   }
 
   return (
-    <Container className={styles.manageTeams} aria-label="Manage Teams">
+    <PageContainer label="Manage Teams">
       <PageHeader name="Teams">
         <SearchInput
           onSubmit={changeSearch}
@@ -112,7 +114,7 @@ const ManageTeams: FC<ManageTeamsProps> = () => {
             </>
           )}
         </div>
-        <div className={styles.table}>
+        <TableContainer>
           <ReusableTable
             name={tableName}
             columns={columns}
@@ -124,9 +126,9 @@ const ManageTeams: FC<ManageTeamsProps> = () => {
             onRowClick={handleRowClick}
             checkboxSelection
           />
-        </div>
+        </TableContainer>
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

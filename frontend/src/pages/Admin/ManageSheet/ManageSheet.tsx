@@ -3,7 +3,7 @@ import styles from './ManageSheet.module.css'
 import AddButton from '../../../components/AddButton'
 import UButton from '../../../components/UButton'
 import ReusableTable from '../../../components/ReusableTable'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Container, Paper } from '@material-ui/core'
 import { User, Grades, SheetGrade, Reviewer } from '../../../models'
 import _ from 'lodash'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
@@ -27,6 +27,8 @@ import {
 import FindModal from '../../../components/FindModal/FindModal'
 import { useTeamProjects } from '../../../hooks/useQuery/useTeamProjects'
 import { TeamProjectDto } from '../../../api/TeamProjects.api'
+import { PageContainer } from '../../../components/PageContainer'
+import { TableContainer } from '../../../components/TableContainer'
 
 type Grade = SheetGrade & { quality: string }
 
@@ -214,8 +216,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
   if (loading === 'loading') return <p>...Loading</p>
 
   return (
-    <Container className={styles.manageSheet} aria-label="Manage Sheet">
-      <CssBaseline />
+    <PageContainer label="Manage Sheet">
       <PageHeader>
         <ReusableGoBack
           pageName="Sheets"
@@ -359,7 +360,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             />
           </div>
         </div>
-        <div className={styles.table}>
+        <TableContainer>
           <ReusableTable
             aria-label="Participants table"
             name={participantsTableName}
@@ -375,7 +376,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             checkboxSelection={true}
             onSelectionModelChange={handleParticipantSelection}
           />
-        </div>
+        </TableContainer>
       </Paper>
       <Paper className={styles.container}>
         <div className={styles.manageContainer}>
@@ -406,7 +407,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             />
           </div>
         </div>
-        <div className={styles.table}>
+        <TableContainer>
           <ReusableTable
             aria-label="Grades table"
             name={mentorGradesTableName}
@@ -426,9 +427,9 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             }
             checkboxSelection
           />
-        </div>
+        </TableContainer>
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

@@ -108,6 +108,8 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     },
     name: {
+      display: 'flex',
+      justifyContent: 'center',
       borderBottom: '1px solid #666666',
       padding: '5% 0',
       marginBottom: '10%',
