@@ -32,3 +32,4 @@ export const useCreateTeam = (onSuccess?: () => void) =>
     invalidate: queryKey,
     onSuccess
   })
+

@@ -6,13 +6,13 @@ export const genericSearch = <T>(queryKey: QueryKey) => (
   column: keyof T,
   search: string,
 ) => {
-  if (search === '')
-    return queryClient.refetchQueries([queryKey], { active: true })
+  if (!search){
+    return  queryClient.refetchQueries([queryKey], { stale: true })
+  }
 
   queryClient.setQueryData(queryKey, (items) => {
-    if (!items) return items
-
-    return (items as T[]).filter((item) => `${item[column]}`.match(search))
+    if (!items) return items;
+    return (items as T[]).filter((item) => `${item[column]}`.toLowerCase().match(search.toLowerCase()));
   })
 }
 
