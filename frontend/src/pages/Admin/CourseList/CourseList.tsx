@@ -6,7 +6,7 @@ import PageHeader from '../../../components/PageHeader'
 import { useHistory } from 'react-router-dom'
 import UButton from '../../../components/UButton'
 import { useCourses } from '../../../hooks'
-import { CircularProgress, LinearProgress } from '@material-ui/core'
+import { LinearProgress } from '@material-ui/core'
 import useSnackbar from '../../../hooks/useSnackbar'
 
 export interface CourseListProps {}
@@ -14,7 +14,7 @@ export interface CourseListProps {}
 const CourseList: React.FC<CourseListProps> = (props) => {
   const history = useHistory()
   const { activeCourse } = useAppSelector((state) => state.courseList)
-  const { data: courseList, error, isLoading, isFetching } = useCourses()
+  const { data: courseList, error, isLoading} = useCourses()
   const { showError } = useSnackbar()
 
   const listElements = courseList?.map((courseListElement) => (
@@ -31,9 +31,8 @@ const CourseList: React.FC<CourseListProps> = (props) => {
 
   if (error) showError('Something went wrong :(')
 
-  if (isLoading) return <CircularProgress />
-  
-  if (isFetching) return <LinearProgress />
+  if (isLoading) return <LinearProgress />
+
 
   return (
     <div>

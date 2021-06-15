@@ -3,7 +3,7 @@ import styles from './ManageSheet.module.css'
 import AddButton from '../../../components/AddButton'
 import UButton from '../../../components/UButton'
 import ReusableTable from '../../../components/ReusableTable'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Container, CssBaseline, Paper, LinearProgress } from '@material-ui/core'
 import { User, Grades, SheetGrade, Reviewer } from '../../../models'
 import _ from 'lodash'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
@@ -70,7 +70,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
   })
 
   let { sheetId } = useParams<{ sheetId: string }>()
-  const { data: sheet, error, isLoading, isFetching } = useSheet(sheetId)
+  const { data: sheet, error, isLoading, } = useSheet(sheetId)
   const { mutate: setMentorForSheet } = useSetMentorForSheet(sheetId, {})
   const { mutate: setProjectForSheet } = useSetProjectForSheet(sheetId, {})
   const { mutate: addParticipant } = useAddUserToSheet(sheetId, {})
@@ -211,7 +211,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
     { field: 'sectionName', headerName: 'Section', width: 250 },
   ]
 
-  if (loading === 'loading') return <p>...Loading</p>
+   if (loading === 'loading') return <LinearProgress />
 
   return (
     <Container className={styles.manageSheet} aria-label="Manage Sheet">
@@ -370,7 +370,6 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
               surname: user.surname,
             }))}
             isLoading={isLoading}
-            isFetching={isFetching}
             error={error}
             checkboxSelection={true}
             onSelectionModelChange={handleParticipantSelection}
@@ -413,7 +412,6 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             columns={gradeColumns}
             data={gradesObjectToArray(sheet?.mentorGrades ?? {})}
             isLoading={isLoading}
-            isFetching={isFetching}
             error={error}
             onSelectionModelChange={handleGradeSelection}
             onRowClick={(params) =>

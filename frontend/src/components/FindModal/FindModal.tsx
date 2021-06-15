@@ -79,7 +79,6 @@ const FindModal = <T extends unknown>(
                   name={props.name}
                   data={props.query.data}
                   isLoading={props.query.isLoading}
-                  isFetching={props.query.isFetching}
                   error={props.query.error}
                   columns={props.columns}
                   onRowClick={handleRowClick}

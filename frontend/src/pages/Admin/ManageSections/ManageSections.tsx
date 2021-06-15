@@ -17,7 +17,7 @@ export interface ManageSectionsProps {}
 const ManageSections: React.FC<ManageSectionsProps> = () => {
   const history = useHistory()
   const tableName = 'Sections'
-  const { data: sections, isLoading, isFetching, error } = useSections()
+  const { data: sections, isLoading, error } = useSections()
 
   const changeSortBy = (value: string) => {
     sortSections(value as keyof ManageSection)
@@ -92,7 +92,6 @@ const ManageSections: React.FC<ManageSectionsProps> = () => {
             columns={columns}
             onRowClick={handleRowClick}
             data={sections}
-            isFetching={isFetching}
             isLoading={isLoading}
             error={error}
           />

@@ -25,7 +25,7 @@ const ManageTeams: FC<ManageTeamsProps> = () => {
   const history = useHistory()
   const { activeCourse } = useAppSelector((state) => state.courseList)
   const [selectedTeams, setSelectedTeams] = useState<string[]>([])
-  const { data: teams, isLoading, isFetching, error } = useTeams(
+  const { data: teams, isLoading, error } = useTeams(
     activeCourse?._id,
   )
   const { mutate: deleteTeam } = useDeleteTeam()
@@ -120,7 +120,6 @@ const ManageTeams: FC<ManageTeamsProps> = () => {
             data={teams}
             error={error}
             isLoading={isLoading}
-            isFetching={isFetching}
             onSelectionModelChange={handleTeamSelection}
             onRowClick={handleRowClick}
             checkboxSelection

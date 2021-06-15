@@ -10,7 +10,6 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  CircularProgress,
   LinearProgress,
 } from '@material-ui/core'
 import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers'
@@ -43,7 +42,7 @@ const SectionView = () => {
   const [isInEditMode, setIsInEditMode] = useState(false)
 
   const { id } = useParams<Record<'id', string>>()
-  const { data: section, isLoading, isFetching, error } = useSection(id)
+  const { data: section, isLoading, error } = useSection(id)
   const projectQuery = useProjectForSection(id)
   const { mutate: patchSection } = usePatchSection()
   const { mutate: addSection } = useCreateSection()
@@ -189,9 +188,6 @@ const SectionView = () => {
   if (displayedError) showError((displayedError as Error).message)
 
   if (isLoading || coursesQuery.isLoading || projectQuery.isLoading)
-    return <CircularProgress />
-
-  if (isFetching || coursesQuery.isFetching || projectQuery.isFetching)
     return <LinearProgress />
 
   return (
