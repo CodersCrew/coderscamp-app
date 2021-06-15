@@ -1,5 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { removeUserFromLocalStorage } from '../app/utils'
+import Cookies from 'universal-cookie'
+
+const cookies = new Cookies()
 
 axios.defaults.baseURL = process.env.REACT_APP_API_URL + '/api/'
 axios.defaults.headers.common = {
@@ -10,6 +13,8 @@ axios.defaults.withCredentials = true
 axios.interceptors.response.use(
   (response) => response,
   async (error) => {
+    const cookie = cookies.get('token')
+
     if (error.response) {
       const { status, data } = error.response
       switch (status) {
@@ -27,9 +32,10 @@ axios.interceptors.response.use(
             } catch (e) {
               return _redirect()
             }
-          } else {
+          } else if (cookie?.token) {
             return _redirect()
           }
+          return Promise.reject(error)
         default:
           return Promise.reject(error)
       }
