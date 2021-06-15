@@ -22,6 +22,7 @@ export class Repository {
     this.model.create(obj)
   }
   async updateById(id: mongoose.Types.ObjectId, obj: object) {
+    //todo add some protection to disable duplicates
     return await this.model.findByIdAndUpdate(id, obj, {
       useFindAndModify: false,
       upsert: false,
