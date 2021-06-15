@@ -3,7 +3,7 @@
 exports[`HomePage should render home page 1`] = `
 <div>
   <div
-    class="container"
+    class="MuiContainer-root pageContainer MuiContainer-maxWidthLg"
   >
     <div
       class="headerContainer"

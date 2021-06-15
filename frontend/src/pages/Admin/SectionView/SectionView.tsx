@@ -4,8 +4,6 @@ import DateFnsUtils from '@date-io/date-fns'
 import 'date-fns'
 //
 import {
-  Container,
-  CssBaseline,
   Paper,
   InputLabel,
   MenuItem,
@@ -30,6 +28,7 @@ import {
   useSection,
 } from '../../../hooks'
 import useSnackbar from '../../../hooks/useSnackbar'
+import { PageContainer } from '../../../components/PageContainer'
 
 const SectionView = () => {
   const [sectionName, setSectionName] = useState('')
@@ -195,8 +194,7 @@ const SectionView = () => {
     return <LinearProgress />
 
   return (
-    <Container className={styles.manageSections} aria-label="Manage Section">
-      <CssBaseline />
+    <PageContainer label="Manage Section">
       <PageHeader>
         <ReusableGoBack
           pageName="Sections"
@@ -258,7 +256,7 @@ const SectionView = () => {
           </div>
         </div>
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

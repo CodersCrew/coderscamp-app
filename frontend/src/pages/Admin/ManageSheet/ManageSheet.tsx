@@ -3,7 +3,7 @@ import styles from './ManageSheet.module.css'
 import AddButton from '../../../components/AddButton'
 import UButton from '../../../components/UButton'
 import ReusableTable from '../../../components/ReusableTable'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Container, Paper } from '@material-ui/core'
 import { User, Grades, SheetGrade, Reviewer } from '../../../models'
 import _ from 'lodash'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
@@ -27,6 +27,7 @@ import {
 import FindModal from '../../../components/FindModal/FindModal'
 import { useTeamProjects } from '../../../hooks/useQuery/useTeamProjects'
 import { TeamProjectDto } from '../../../api/TeamProjects.api'
+import { PageContainer } from '../../../components/PageContainer'
 
 type Grade = SheetGrade & { quality: string }
 
@@ -214,8 +215,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
   if (loading === 'loading') return <p>...Loading</p>
 
   return (
-    <Container className={styles.manageSheet} aria-label="Manage Sheet">
-      <CssBaseline />
+    <PageContainer label="Manage Sheet">
       <PageHeader>
         <ReusableGoBack
           pageName="Sheets"
@@ -317,7 +317,6 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
               </ul>
             </li>
           </ul>
-
           <ul className={styles.teamInfo}>
             <li className={styles.teamInfoRow}>
               <span>Url:</span>
@@ -359,23 +358,21 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             />
           </div>
         </div>
-        <div className={styles.table}>
-          <ReusableTable
-            aria-label="Participants table"
-            name={participantsTableName}
-            columns={participantColumns}
-            data={sheet?.participants.map((user) => ({
-              id: user.participantID,
-              name: user.name,
-              surname: user.surname,
-            }))}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            error={error}
-            checkboxSelection={true}
-            onSelectionModelChange={handleParticipantSelection}
-          />
-        </div>
+        <ReusableTable
+          aria-label="Participants table"
+          name={participantsTableName}
+          columns={participantColumns}
+          data={sheet?.participants.map((user) => ({
+            id: user.participantID,
+            name: user.name,
+            surname: user.surname,
+          }))}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          error={error}
+          checkboxSelection={true}
+          onSelectionModelChange={handleParticipantSelection}
+        />
       </Paper>
       <Paper className={styles.container}>
         <div className={styles.manageContainer}>
@@ -406,29 +403,28 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             />
           </div>
         </div>
-        <div className={styles.table}>
-          <ReusableTable
-            aria-label="Grades table"
-            name={mentorGradesTableName}
-            columns={gradeColumns}
-            data={gradesObjectToArray(sheet?.mentorGrades ?? {})}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            error={error}
-            onSelectionModelChange={handleGradeSelection}
-            onRowClick={(params) =>
-              setEditedGrade({
-                quality: params.row.quality,
-                points: params.row.points,
-                comment: params.row.comment,
-                description: params.row.description,
-              })
-            }
-            checkboxSelection
-          />
-        </div>
+
+        <ReusableTable
+          aria-label="Grades table"
+          name={mentorGradesTableName}
+          columns={gradeColumns}
+          data={gradesObjectToArray(sheet?.mentorGrades ?? {})}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          error={error}
+          onSelectionModelChange={handleGradeSelection}
+          onRowClick={(params) =>
+            setEditedGrade({
+              quality: params.row.quality,
+              points: params.row.points,
+              comment: params.row.comment,
+              description: params.row.description,
+            })
+          }
+          checkboxSelection
+        />
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

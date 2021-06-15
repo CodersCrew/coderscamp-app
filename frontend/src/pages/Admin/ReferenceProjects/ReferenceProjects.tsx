@@ -1,16 +1,16 @@
 import React from 'react'
 import { Box, LinearProgress } from '@material-ui/core'
-import { ThemeProvider } from '@material-ui/styles'
 import { useHistory } from 'react-router-dom'
 
 import UButton from '../../../components/UButton'
 import ReusableTable from '../../../components/ReusableTable'
 
 import styles from './ReferenceProjects.module.css'
-import { mainTheme } from '../../../theme/customMaterialTheme'
+
 import PageHeader from '../../../components/PageHeader'
 import { useProjects } from '../../../hooks'
 import useSnackbar from '../../../hooks/useSnackbar'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface ReferenceProjectsProps {}
 
@@ -43,7 +43,7 @@ const ReferenceProjects: React.FC<ReferenceProjectsProps> = () => {
   if (!refProjects) return <div>Error...</div>
 
   return (
-    <ThemeProvider theme={mainTheme}>
+    <PageContainer label="Projects">
       <PageHeader name="Projects" />
       <Box className={styles.container}>
         <Box display="flex" className={styles.container__header}>
@@ -52,19 +52,17 @@ const ReferenceProjects: React.FC<ReferenceProjectsProps> = () => {
             <UButton text="ADD" color="primary" onClick={handleAddButton} />
           </div>
         </Box>
-        <div className={styles.projectsTable}>
-          <ReusableTable
-            name=""
-            columns={columns}
-            onRowClick={handleSelection}
-            isLoading={isLoading}
-            error={error}
-            data={refProjects}
-            isFetching={isFetching}
-          />
-        </div>
+        <ReusableTable
+          name=""
+          columns={columns}
+          onRowClick={handleSelection}
+          isLoading={isLoading}
+          error={error}
+          data={refProjects}
+          isFetching={isFetching}
+        />
       </Box>
-    </ThemeProvider>
+    </PageContainer>
   )
 }
 
