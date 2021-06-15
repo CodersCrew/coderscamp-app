@@ -58,7 +58,7 @@
   text-align: center;
   padding: 0.3rem 1.1rem;
   border-radius: 0.2rem;
-  width: 100px;
+  width: 150px;
 }
 
 .status_radio_button__blue {
@@ -75,6 +75,12 @@
   background: #1c1c1c;
   border: rgba(60, 193, 59, 0.75) 1px solid;
   color: #3cc13b;
+}
+
+.status_radio_button__gray {
+  background: #1c1c1c;
+  border: rgba(142, 144, 142, 0.75) 1px solid;
+  color: #d6d2d2;
 }
 
 #buttonEdit,
