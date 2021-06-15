@@ -20,7 +20,6 @@ import {
 } from '../../../hooks'
 import FindModal from '../../../components/FindModal/FindModal'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageTeamProps {}
 
@@ -172,32 +171,28 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
             />
           </div>
         </div>
-        <TableContainer>
-          <ReusableTable
-            aria-label="Team members table"
-            name="Team"
-            columns={columns}
-            data={team?.users}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            error={error}
-            checkboxSelection={true}
-            onSelectionModelChange={handleUserSelection}
-          />
-        </TableContainer>
+        <ReusableTable
+          aria-label="Team members table"
+          name="Team"
+          columns={columns}
+          data={team?.users}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          error={error}
+          checkboxSelection={true}
+          onSelectionModelChange={handleUserSelection}
+        />
         <div className={styles.manageContainer}>
           <h2 className={styles.manageHeader}>Projects</h2>
         </div>
-        <TableContainer>
-          <ReusableTable
-            name="TeamProjects"
-            columns={projectColumns}
-            data={team?.projects}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            error={error}
-          />
-        </TableContainer>
+        <ReusableTable
+          name="TeamProjects"
+          columns={projectColumns}
+          data={team?.projects}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          error={error}
+        />
       </Paper>
     </PageContainer>
   )

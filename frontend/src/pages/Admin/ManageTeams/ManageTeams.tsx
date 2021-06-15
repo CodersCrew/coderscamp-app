@@ -19,7 +19,6 @@ import {
 import { Team } from '../../../models'
 import { CreateTeam } from '../CreateTeam'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageTeamsProps {}
 
@@ -114,19 +113,17 @@ const ManageTeams: FC<ManageTeamsProps> = () => {
             </>
           )}
         </div>
-        <TableContainer>
-          <ReusableTable
-            name={tableName}
-            columns={columns}
-            data={teams}
-            error={error}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            onSelectionModelChange={handleTeamSelection}
-            onRowClick={handleRowClick}
-            checkboxSelection
-          />
-        </TableContainer>
+        <ReusableTable
+          name={tableName}
+          columns={columns}
+          data={teams}
+          error={error}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          onSelectionModelChange={handleTeamSelection}
+          onRowClick={handleRowClick}
+          checkboxSelection
+        />
       </Paper>
     </PageContainer>
   )

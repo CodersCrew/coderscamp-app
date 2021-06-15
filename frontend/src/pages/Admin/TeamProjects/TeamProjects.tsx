@@ -8,7 +8,6 @@ import { useHistory } from 'react-router-dom'
 import PageHeader from '../../../components/PageHeader'
 import SearchInput from '../../../components/SearchInput'
 import { useTeamProjects } from '../../../hooks/useQuery/useTeamProjects'
-import { TableContainer } from '../../../components/TableContainer'
 import { PageContainer } from '../../../components/PageContainer'
 
 export interface TeamProjectsProps {}
@@ -52,14 +51,12 @@ const TeamProjects: React.FC<TeamProjectsProps> = () => {
         />
       </PageHeader>
       <Paper className={styles.main}>
-        <TableContainer>
-          <ReusableTable
-            name={'Team projects'}
-            columns={columns}
-            onRowClick={(params) => history.push(`/teamprojects/${params.id}`)}
-            {...info}
-          />
-        </TableContainer>
+        <ReusableTable
+          name={'Team projects'}
+          columns={columns}
+          onRowClick={(params) => history.push(`/teamprojects/${params.id}`)}
+          {...info}
+        />
       </Paper>
     </PageContainer>
   )

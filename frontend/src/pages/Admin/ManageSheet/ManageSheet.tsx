@@ -28,7 +28,6 @@ import FindModal from '../../../components/FindModal/FindModal'
 import { useTeamProjects } from '../../../hooks/useQuery/useTeamProjects'
 import { TeamProjectDto } from '../../../api/TeamProjects.api'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 type Grade = SheetGrade & { quality: string }
 
@@ -318,7 +317,6 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
               </ul>
             </li>
           </ul>
-
           <ul className={styles.teamInfo}>
             <li className={styles.teamInfoRow}>
               <span>Url:</span>
@@ -360,23 +358,21 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             />
           </div>
         </div>
-        <TableContainer>
-          <ReusableTable
-            aria-label="Participants table"
-            name={participantsTableName}
-            columns={participantColumns}
-            data={sheet?.participants.map((user) => ({
-              id: user.participantID,
-              name: user.name,
-              surname: user.surname,
-            }))}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            error={error}
-            checkboxSelection={true}
-            onSelectionModelChange={handleParticipantSelection}
-          />
-        </TableContainer>
+        <ReusableTable
+          aria-label="Participants table"
+          name={participantsTableName}
+          columns={participantColumns}
+          data={sheet?.participants.map((user) => ({
+            id: user.participantID,
+            name: user.name,
+            surname: user.surname,
+          }))}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          error={error}
+          checkboxSelection={true}
+          onSelectionModelChange={handleParticipantSelection}
+        />
       </Paper>
       <Paper className={styles.container}>
         <div className={styles.manageContainer}>
@@ -407,27 +403,26 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
             />
           </div>
         </div>
-        <TableContainer>
-          <ReusableTable
-            aria-label="Grades table"
-            name={mentorGradesTableName}
-            columns={gradeColumns}
-            data={gradesObjectToArray(sheet?.mentorGrades ?? {})}
-            isLoading={isLoading}
-            isFetching={isFetching}
-            error={error}
-            onSelectionModelChange={handleGradeSelection}
-            onRowClick={(params) =>
-              setEditedGrade({
-                quality: params.row.quality,
-                points: params.row.points,
-                comment: params.row.comment,
-                description: params.row.description,
-              })
-            }
-            checkboxSelection
-          />
-        </TableContainer>
+
+        <ReusableTable
+          aria-label="Grades table"
+          name={mentorGradesTableName}
+          columns={gradeColumns}
+          data={gradesObjectToArray(sheet?.mentorGrades ?? {})}
+          isLoading={isLoading}
+          isFetching={isFetching}
+          error={error}
+          onSelectionModelChange={handleGradeSelection}
+          onRowClick={(params) =>
+            setEditedGrade({
+              quality: params.row.quality,
+              points: params.row.points,
+              comment: params.row.comment,
+              description: params.row.description,
+            })
+          }
+          checkboxSelection
+        />
       </Paper>
     </PageContainer>
   )

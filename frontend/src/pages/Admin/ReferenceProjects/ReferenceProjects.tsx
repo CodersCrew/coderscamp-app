@@ -11,7 +11,6 @@ import PageHeader from '../../../components/PageHeader'
 import { useProjects } from '../../../hooks'
 import useSnackbar from '../../../hooks/useSnackbar'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 export interface ReferenceProjectsProps {}
 
@@ -53,17 +52,15 @@ const ReferenceProjects: React.FC<ReferenceProjectsProps> = () => {
             <UButton text="ADD" color="primary" onClick={handleAddButton} />
           </div>
         </Box>
-        <TableContainer>
-          <ReusableTable
-            name=""
-            columns={columns}
-            onRowClick={handleSelection}
-            isLoading={isLoading}
-            error={error}
-            data={refProjects}
-            isFetching={isFetching}
-          />
-        </TableContainer>
+        <ReusableTable
+          name=""
+          columns={columns}
+          onRowClick={handleSelection}
+          isLoading={isLoading}
+          error={error}
+          data={refProjects}
+          isFetching={isFetching}
+        />
       </Box>
     </PageContainer>
   )

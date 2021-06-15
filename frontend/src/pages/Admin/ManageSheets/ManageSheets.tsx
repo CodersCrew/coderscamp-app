@@ -18,7 +18,6 @@ import {
 } from '../../../hooks'
 import { GradeSheet } from '../../../models'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageSheetsProps {}
 
@@ -114,19 +113,17 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
             />
           </span>
         </div>
-        <TableContainer>
-          <ReusableTable
-            name={tableName}
-            columns={columns}
-            isLoading={isLoading}
-            error={error}
-            data={sheets}
-            isFetching={isFetching}
-            onRowClick={handleRowClick}
-            onSelectionModelChange={handleSheetSelection}
-            checkboxSelection
-          />
-        </TableContainer>
+        <ReusableTable
+          name={tableName}
+          columns={columns}
+          isLoading={isLoading}
+          error={error}
+          data={sheets}
+          isFetching={isFetching}
+          onRowClick={handleRowClick}
+          onSelectionModelChange={handleSheetSelection}
+          checkboxSelection
+        />
       </Paper>
     </PageContainer>
   )

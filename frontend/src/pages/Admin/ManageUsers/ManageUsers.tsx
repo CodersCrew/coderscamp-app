@@ -25,7 +25,6 @@ import {
   useDidUpdateEffect,
 } from '../../../hooks'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageUsersProps {}
 
@@ -106,17 +105,15 @@ const ManageUsers: React.FC<ManageUsersProps> = () => {
             />
           </span>
         </div>
-        <TableContainer>
-          <ReusableTable
-            name={tableName}
-            columns={columns}
-            onRowClick={handleSelection}
-            isLoading={isLoading}
-            error={error}
-            data={data}
-            isFetching={isFetching}
-          />
-        </TableContainer>
+        <ReusableTable
+          name={tableName}
+          columns={columns}
+          onRowClick={handleSelection}
+          isLoading={isLoading}
+          error={error}
+          data={data}
+          isFetching={isFetching}
+        />
       </Paper>
     </PageContainer>
   )

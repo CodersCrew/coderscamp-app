@@ -12,7 +12,6 @@ import { searchSection, sortSections, useSections } from '../../../hooks'
 import { ManageSection } from '../../../models'
 import { displayFormattedDate } from '../../../api'
 import { PageContainer } from '../../../components/PageContainer'
-import { TableContainer } from '../../../components/TableContainer'
 
 export interface ManageSectionsProps {}
 
@@ -87,17 +86,16 @@ const ManageSections: React.FC<ManageSectionsProps> = () => {
             />
           </span>
         </div>
-        <TableContainer>
-          <ReusableTable
-            name={tableName}
-            columns={columns}
-            onRowClick={handleRowClick}
-            data={sections}
-            isFetching={isFetching}
-            isLoading={isLoading}
-            error={error}
-          />
-        </TableContainer>
+
+        <ReusableTable
+          name={tableName}
+          columns={columns}
+          onRowClick={handleRowClick}
+          data={sections}
+          isFetching={isFetching}
+          isLoading={isLoading}
+          error={error}
+        />
       </Paper>
     </PageContainer>
   )
