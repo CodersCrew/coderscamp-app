@@ -13,27 +13,37 @@ interface FindModalProps<T> {
   onRowSelection: any
   query: UseQueryResult<T[]>
   columns: { field: string; width: number; fieldName?: string }[]
-  searchPlaceholder?: string
   searchBy: keyof T
   name: string
   queryKey: string
   open: boolean
   handleClose: () => void
   handleOpen: () => void
+  searchPlaceholder?: string
 }
 
-const FindModal = <T extends unknown>(
-  props: FindModalProps<T>,
-) => {
+const FindModal = <T extends unknown>({
+  onRowSelection,
+  query,
+  columns,
+  searchBy,
+  name,
+  queryKey,
+  open,
+  handleClose,
+  handleOpen,
+  searchPlaceholder,
+}: FindModalProps<T>) => {
+  const {data, error, isLoading}= query;
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    props.handleOpen()
+    handleOpen()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
-    genericSearch<T>(props.queryKey)(`${props.searchBy}` as keyof T, search)
+    genericSearch<T>(queryKey)(`${searchBy}` as keyof T, search)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search])
 
@@ -41,9 +51,9 @@ const FindModal = <T extends unknown>(
     setSearch(name)
   }
 
-  function handleRowClick(params: any, e: any) {
-    props.onRowSelection(params.row)
-    props.handleClose()
+  function handleRowClick(params: any) {
+    onRowSelection(params.row)
+    handleClose()
   }
 
   return (
@@ -53,34 +63,34 @@ const FindModal = <T extends unknown>(
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         className={styles.modal}
-        open={props.open}
-        onClose={props.handleClose}
+        open={open}
+        onClose={handleClose}
         closeAfterTransition={true}
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={props.open}>
+        <Fade in={open}>
           <div className={styles.container}>
             <div className={styles.container__header}>
-              <span>{props.name}</span>
+              <span>{name}</span>
             </div>
 
             <div className={styles.container__body}>
               <div className={styles.container__body__search}>
                 <SearchInput
                   onSubmit={onSearch}
-                  placeholder={props.searchPlaceholder ?? ''}
+                  placeholder={searchPlaceholder ?? ''}
                 />
               </div>
               <div className={styles.container__body__table}>
                 <ReusableTable
-                  name={props.name}
-                  data={props.query.data}
-                  isLoading={props.query.isLoading}
-                  error={props.query.error}
-                  columns={props.columns}
+                  name={name}
+                  data={data}
+                  isLoading={isLoading}
+                  error={error}
+                  columns={columns}
                   onRowClick={handleRowClick}
                 />
               </div>

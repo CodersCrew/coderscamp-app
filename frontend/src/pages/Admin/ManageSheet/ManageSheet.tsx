@@ -41,10 +41,9 @@ function gradesObjectToArray(grades: Grades): Grade[] {
 export interface ManageSheetProps {}
 
 const ManageSheet: React.FC<ManageSheetProps> = () => {
-  const mentorGradesTableName = 'Mentor Grades'
+  const mentorGradesTableName = 'Mentor Gradessss'
   const participantsTableName = 'Participants'
 
-  const [loading, setLoading] = useState<'loading' | 'idle'>('loading')
   const [mentor, setMentor] = useState<User>()
   const [project, setProject] = useState({
     id: '',
@@ -70,7 +69,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
   })
 
   let { sheetId } = useParams<{ sheetId: string }>()
-  const { data: sheet, error, isLoading, } = useSheet(sheetId)
+  const { data: sheet, error, isLoading } = useSheet(sheetId)
   const { mutate: setMentorForSheet } = useSetMentorForSheet(sheetId, {})
   const { mutate: setProjectForSheet } = useSetProjectForSheet(sheetId, {})
   const { mutate: addParticipant } = useAddUserToSheet(sheetId, {})
@@ -118,7 +117,6 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
       }))
       setReviewers(reviewersArr)
       setMentorGrades(sheet.mentorGrades)
-      setLoading('idle')
       setOpenUsersModal(false)
     }
   }, [sheet])
@@ -211,7 +209,7 @@ const ManageSheet: React.FC<ManageSheetProps> = () => {
     { field: 'sectionName', headerName: 'Section', width: 250 },
   ]
 
-   if (loading === 'loading') return <LinearProgress />
+   if (isLoading) return <LinearProgress />
 
   return (
     <Container className={styles.manageSheet} aria-label="Manage Sheet">
