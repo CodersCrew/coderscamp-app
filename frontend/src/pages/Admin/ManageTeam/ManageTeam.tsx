@@ -3,7 +3,7 @@ import styles from './ManageTeam.module.css'
 import AddButton from '../../../components/AddButton'
 import UButton from '../../../components/UButton'
 import ReusableTable from '../../../components/ReusableTable'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Container, Paper } from '@material-ui/core'
 import { User } from '../../../models'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
 import { useParams } from 'react-router-dom'
@@ -19,6 +19,7 @@ import {
   useUsersOfType,
 } from '../../../hooks'
 import FindModal from '../../../components/FindModal/FindModal'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface ManageTeamProps {}
 
@@ -90,8 +91,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
   ]
 
   return (
-    <Container className={styles.manageTeams} aria-label="Manage Teams">
-      <CssBaseline />
+    <PageContainer label="Manage Teams">
       <PageHeader>
         <ReusableGoBack
           pageName="Teams"
@@ -171,32 +171,28 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
             />
           </div>
         </div>
-        <div className={styles.table}>
-          <ReusableTable
-            aria-label="Team members table"
-            name="Team"
-            columns={columns}
-            data={team?.users}
-            isLoading={isLoading}
-            error={error}
-            checkboxSelection={true}
-            onSelectionModelChange={handleUserSelection}
-          />
-        </div>
+        <ReusableTable
+          aria-label="Team members table"
+          name="Team"
+          columns={columns}
+          data={team?.users}
+          isLoading={isLoading}
+          error={error}
+          checkboxSelection={true}
+          onSelectionModelChange={handleUserSelection}
+        />
         <div className={styles.manageContainer}>
           <h2 className={styles.manageHeader}>Projects</h2>
         </div>
-        <div className={styles.table}>
-          <ReusableTable
-            name="TeamProjects"
-            columns={projectColumns}
-            data={team?.projects}
-            isLoading={isLoading}
-            error={error}
-          />
-        </div>
+        <ReusableTable
+          name="TeamProjects"
+          columns={projectColumns}
+          data={team?.projects}
+          isLoading={isLoading}
+          error={error}
+        />
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

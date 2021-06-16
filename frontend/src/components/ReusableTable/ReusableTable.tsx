@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { DataGrid, DataGridProps } from '@material-ui/data-grid'
 import styles from './ReusableTable.module.css'
 import { LinearProgress } from '@material-ui/core'
+import { TableContainer } from '../TableContainer'
 
 interface Column {
   field: string
@@ -33,19 +34,24 @@ const ReusableTableFC: React.FC<ReusableTableProps> = ({
   const [tableName] = useState(name)
 
   if (isLoading) return <LinearProgress />
-  if (error) {console.trace(); return <div>{error.message}</div>}
+  if (error) {
+    console.trace()
+    return <div>{error.message}</div>
+  }
   if (data === undefined) return <div>Error</div>
   return (
-    <div className={styles.container} aria-label={'Table - ' + tableName}>
-      <DataGrid
-        rows={data}
-        columns={columns}
-        pageSize={5}
-        autoHeight
-        disableSelectionOnClick={true}
-        {...restOfProps}
-      />
-    </div>
+    <TableContainer>
+      <div className={styles.container} aria-label={'Table - ' + tableName}>
+        <DataGrid
+          rows={data}
+          columns={columns}
+          pageSize={5}
+          autoHeight
+          disableSelectionOnClick={true}
+          {...restOfProps}
+        />
+      </div>
+    </TableContainer>
   )
 }
 

@@ -23,8 +23,11 @@ const teamsRoutes = (controller: TeamController) => {
       .patch(HasRole([UserType.Admin]), controller.updateTeam)
 
     router
-      .route('/teams/:id/users')
+      .route('/teams/:id/user')
       .post(HasRole([UserType.Admin]), controller.addUserToTeam)
+    router
+      .route('/teams/:id/users')
+      .post(HasRole([UserType.Admin]), controller.addUsersToTeam)
     router
       .route('/teams/:teamId/users/:userId')
       .delete(HasRole([UserType.Admin]), controller.deleteUserFromTeam)

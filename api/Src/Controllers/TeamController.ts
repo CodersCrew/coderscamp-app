@@ -62,6 +62,14 @@ export default class TeamsController {
     res.status(200).json({ message: 'User added to team' })
   }
 
+  addUsersToTeam = async (req: Request, res: Response) => {
+    const teamId = new mongoose.Types.ObjectId(req.params.id)
+    const usersIds: Array<mongoose.Types.ObjectId> = req.body
+    const team = await this.service.addUsersToTeam(teamId, usersIds)
+    if (!team) return res.status(404).json({ message: 'Team not found' })
+    res.status(200).json({ message: 'Users added to team' })
+  }
+
   addMentorToTeam = async (req: Request, res: Response) => {
     const teamId = new mongoose.Types.ObjectId(req.params.id)
     const mentorId = new mongoose.Types.ObjectId(req.body.mentorId)

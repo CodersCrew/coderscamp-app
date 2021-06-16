@@ -1,6 +1,7 @@
 import React from 'react'
 import PageHeader from '../../components/PageHeader'
 import ReusableGoBack from '../../components/ReusableGoBack'
+import { PageContainer } from '../PageContainer'
 
 export interface DetailPageProps {
   pageName: string
@@ -9,12 +10,12 @@ export interface DetailPageProps {
 
 const DetailPage: React.FC<DetailPageProps> = ({ children, ...restProps }) => {
   return (
-    <div>
+    <PageContainer>
       <PageHeader>
         <ReusableGoBack {...restProps} />
       </PageHeader>
       {children}
-    </div>
+    </PageContainer>
   )
 }
 

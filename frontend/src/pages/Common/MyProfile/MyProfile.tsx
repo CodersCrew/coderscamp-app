@@ -6,6 +6,7 @@ import PageHeader from '../../../components/PageHeader'
 import useSnackbar from '../../../hooks/useSnackbar'
 import { useUserMe } from '../../../hooks'
 import { api } from '../../../api'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface MyProfileProps {}
 
@@ -110,7 +111,7 @@ const MyProfile = () => {
     )
   }
   return (
-    <div className={styles.myProfileContainer}>
+    <PageContainer>
       <PageHeader name="My Profile" />
 
       <div className={styles.teamProjectDetailsContainer}>
@@ -148,7 +149,7 @@ const MyProfile = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

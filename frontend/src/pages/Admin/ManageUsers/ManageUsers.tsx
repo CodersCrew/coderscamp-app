@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, CssBaseline, Container } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 import styles from './ManageUsers.module.css'
 import SelectSortBy from '../../../components/SelectSortBy'
 import SearchInput from '../../../components/SearchInput'
@@ -24,6 +24,7 @@ import {
   filterUsers,
   useDidUpdateEffect,
 } from '../../../hooks'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface ManageUsersProps {}
 
@@ -72,7 +73,7 @@ const ManageUsers: React.FC<ManageUsersProps> = () => {
     { field: 'name', headerName: 'Name', width: 150, sortable: true },
     { field: 'surname', headerName: 'Surname', width: 150, sortable: true },
     { field: 'type', headerName: 'Type', width: 150, sortable: true },
-    { field: 'status', headerName: 'Status', width: 150, sortable: true },
+    { field: 'status', headerName: 'Status', width: 130, sortable: true },
   ]
 
   function handleSelection(params: any) {
@@ -82,8 +83,7 @@ const ManageUsers: React.FC<ManageUsersProps> = () => {
   }
 
   return (
-    <Container className={styles.container} aria-label="Manage Users">
-      <CssBaseline />
+    <PageContainer label="Manage Users">
       <PageHeader name="Users">
         <SearchInput
           onSubmit={changeSearch}
@@ -114,7 +114,7 @@ const ManageUsers: React.FC<ManageUsersProps> = () => {
           data={data}
         />
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

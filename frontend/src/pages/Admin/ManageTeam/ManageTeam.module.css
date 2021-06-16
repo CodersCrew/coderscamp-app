@@ -2,15 +2,6 @@
   font-size: 0.7em;
   font-weight: 500;
 }
-.manageTeams {
-  margin: auto;
-  max-width: 800px;
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  font-size: 1.3rem;
-  font-family: Arial, Helvetica, sans-serif;
-}
 .container {
   border: gray 1px solid;
 }
@@ -59,7 +50,4 @@
 }
 .buttons > * {
   margin-left: 2rem !important;
-}
-.table {
-  padding: 3rem;
 }

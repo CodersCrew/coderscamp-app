@@ -8,6 +8,7 @@ import UButton from '../../../components/UButton'
 import { useCourses } from '../../../hooks'
 import { LinearProgress } from '@material-ui/core'
 import useSnackbar from '../../../hooks/useSnackbar'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface CourseListProps {}
 
@@ -35,7 +36,7 @@ const CourseList: React.FC<CourseListProps> = (props) => {
 
 
   return (
-    <div>
+    <PageContainer label="Courses">
       <PageHeader name="Courses"></PageHeader>
       <div>
         <div className={styles.manageCourseBar}>
@@ -48,7 +49,7 @@ const CourseList: React.FC<CourseListProps> = (props) => {
         </div>
         <div className={styles.listContainer}>{listElements}</div>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 
