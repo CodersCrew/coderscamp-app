@@ -58,6 +58,12 @@ export default function SignIn({ onLogin }: LogInProps) {
     return validEmailLength && validPasswordLength
   }
 
+  const handleFormChange = (e: {
+    target: HTMLInputElement | HTMLTextAreaElement
+  }) => {
+    setForm((prevState) => ({ ...prevState, [e.target.name]: e.target.value }))
+  }
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -102,12 +108,7 @@ export default function SignIn({ onLogin }: LogInProps) {
               name="email"
               autoComplete="email"
               value={form.email}
-              onChange={(e) =>
-                setForm((prevState) => ({
-                  ...prevState,
-                  email: e.target.value,
-                }))
-              }
+              onChange={handleFormChange}
               autoFocus
               data-testid="li-email"
               error={invalidEmail}
@@ -120,12 +121,7 @@ export default function SignIn({ onLogin }: LogInProps) {
               type="password"
               autoComplete="current-password"
               value={form.password}
-              onChange={(e) =>
-                setForm((prevState) => ({
-                  ...prevState,
-                  password: e.target.value,
-                }))
-              }
+              onChange={handleFormChange}
               data-testid="li-password"
               error={invalidPasswd}
               helperText={invalidPasswd && 'Pasword is required!'}
