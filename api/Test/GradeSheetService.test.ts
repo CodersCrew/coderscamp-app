@@ -1,15 +1,127 @@
 import GradeSheetService from '../Src/Services/GradeSheetService'
-import GradeSheetRepository from '../Src/Repositories/GradeSheetRepository'
-import { GradeSheet } from '../Src/Models/GradeSheet'
-import GradeSheetDbModel from '../Src/Models/GradeSheet'
+import GradeSheetRepository, {
+  GradeSheetFilters,
+} from '../Src/Repositories/GradeSheetRepository'
+import { GradeSheetDto, GradeSheetsDto } from '../Src/Models/DTO/GradeSheetDto'
+import GradeSheetDbModel, {
+  Grade,
+  GradeSheet,
+  Participant,
+} from '../Src/Models/GradeSheet'
 import { Document, Types } from 'mongoose'
 import * as _ from 'lodash'
+
+interface User {
+  _id: string
+  name: string
+  surname: string
+  email?: string
+}
+
+type TestGradeSheet = {
+  _id: string
+  project: {
+    _id: string
+    projectName: string
+    projectUrl: string
+    description: string
+  }[]
+  mentor: User[]
+  mentorGrades: {
+    [prop: string]: Grade
+  }
+  reviewers: User[]
+  mentorReviewerGrades: Array<{
+    mentorID: Types.ObjectId
+    grades: {
+      [prop: string]: Grade
+    }
+  }>
+  participantData: User[]
+  participants: Participant[]
+  section: {
+    _id: string
+    name: string
+  }
+  courseId: string
+}
+
+function createFilters(filters: GradeSheetFilters) {
+  const {
+    id,
+    sectionId,
+    projectId,
+    teamProjectId,
+    courseId,
+    mentorId,
+    participantId,
+    mentorReviewerId,
+  } = filters
+
+  return (sheet: GradeSheet & Document) => {
+    const sheetFilters = [
+      !id || `${sheet._id}` === id,
+      !teamProjectId || `${sheet.projectID}` === teamProjectId,
+      !mentorId || `${sheet.mentorID}` === mentorId,
+      !participantId ||
+        sheet.participants.some((p) => `${p.participantID}` === participantId),
+      !mentorReviewerId ||
+        sheet.reviewers.some((revId) => `${revId}` === mentorReviewerId),
+    ]
+    return sheetFilters.every((f) => f)
+  }
+}
+
+function projectGradeSheet(sheet: GradeSheet & Document): TestGradeSheet {
+  return {
+    _id: sheet._id,
+    courseId: '1',
+    mentor: [
+      {
+        _id: sheet.mentorID + '',
+        surname: 'MentorSurname',
+        name: 'MentorName',
+        email: 'mentor@email.pl',
+      },
+    ],
+    project: [
+      {
+        _id: sheet.projectID + '',
+        projectName: 'ProjectName',
+        description: 'ProjectDescription',
+        projectUrl: 'ProjectURL',
+      },
+    ],
+    mentorGrades: sheet.mentorGrades,
+    reviewers: sheet.reviewers.map((r) => ({
+      _id: r + '',
+      name: 'RevName',
+      surname: 'RevSurname',
+    })),
+    mentorReviewerGrades: sheet.mentorReviewerGrades,
+    participants: sheet.participants,
+    participantData: sheet.participants.map((p) => ({
+      _id: p.participantID + '',
+      name: 'ParticipantName',
+      surname: 'ParticipantSurname',
+    })),
+    section: {
+      _id: 'sectionId',
+      name: 'Typescript',
+    },
+  }
+}
 
 class TestRepository extends GradeSheetRepository {
   gradeSheets: Array<GradeSheet & Document>
   constructor() {
     super(GradeSheetDbModel)
     this.gradeSheets = []
+  }
+
+  async find(filters: GradeSheetFilters) {
+    const filterFunction = createFilters(filters)
+    return this.gradeSheets.filter(filterFunction).map(projectGradeSheet)
   }
 
   async clear() {
@@ -76,6 +188,7 @@ class TestRepository extends GradeSheetRepository {
 }
 
 const testRepo = new TestRepository()
+//@ts-ignore
 const service = new GradeSheetService(testRepo)
 
 describe('Test GradeSheetService ', () => {
@@ -84,19 +197,19 @@ describe('Test GradeSheetService ', () => {
 
   beforeEach(async () => {
     await service.createGradeSheet({
-      projectID: new Types.ObjectId(),
-      mentorID: new Types.ObjectId(),
+      projectId: `${new Types.ObjectId()}`,
+      mentorId: `${new Types.ObjectId()}`,
       participants: [],
-      reviewers: null,
+      reviewers: [],
       mentorGrades: {
         design: { points: 1 },
         extra: { points: 2 },
       },
-      mentorReviewerGrades: null,
-    } as GradeSheet)
+      mentorReviewerGrades: [],
+    })
 
     for (let i = 0; i < nSheets - 1; i++) {
-      const mentorReviewerId = new Types.ObjectId()
+      const mentorReviewerId = `${new Types.ObjectId()}`
       const reviewerGrades = {
         mentorID: mentorReviewerId,
         grades: {
@@ -107,8 +220,8 @@ describe('Test GradeSheetService ', () => {
       }
       const mentorReviewerGrades = i / nSheets > 0.5 ? [reviewerGrades] : []
       await service.createGradeSheet({
-        projectID: new Types.ObjectId(),
-        mentorID: new Types.ObjectId(),
+        projectId: `${new Types.ObjectId()}`,
+        mentorId: `${new Types.ObjectId()}`,
         participants: [],
         reviewers: [mentorReviewerId],
         mentorGrades: {
@@ -117,10 +230,10 @@ describe('Test GradeSheetService ', () => {
           extra: { points: Math.round(Math.random() * 10) },
         },
         mentorReviewerGrades,
-      } as GradeSheet)
+      })
     }
 
-    gradeSheets = await service.getGradeSheets()
+    gradeSheets = testRepo.gradeSheets
   })
 
   afterEach(async () => {
@@ -132,9 +245,13 @@ describe('Test GradeSheetService ', () => {
   })
 
   test('find sheet by id', async () => {
-    expect(await service.findGradeSheetById(gradeSheets[0]._id)).toEqual(
-      gradeSheets[0],
-    )
+    const sheet = await service.findGradeSheetById(gradeSheets[0]._id + '')
+    expect(sheet.mentorId).toEqual(gradeSheets[0].mentorID + '')
+  })
+
+  test('get sheets', async () => {
+    const sheets = await service.getGradeSheets()
+    expect(sheets).toHaveLength(nSheets)
   })
 
   test('add mentor reviewer', async () => {
@@ -144,6 +261,26 @@ describe('Test GradeSheetService ', () => {
     expect(gradeSheets[idx].reviewers).toHaveLength(0)
     await service.addMentorReviewer(sheetId, mentorId)
     expect(gradeSheets[idx].reviewers).toHaveLength(1)
+  })
+
+  test('set mentor', async () => {
+    const idx = 1
+    const sheetId = gradeSheets[idx]._id
+    const mentorId = new Types.ObjectId()
+    await service.setMentor(sheetId, mentorId)
+    expect(gradeSheets[idx].mentorID).toBe(mentorId)
+    const sheet = await service.getMentorGradeSheet(`${sheetId}`, `${mentorId}`)
+    const sheets = await service.getMentorGradeSheets(`${mentorId}`)
+    expect(sheets).toHaveLength(1)
+    expect(sheet.mentorId).toBe(`${mentorId}`)
+  })
+
+  test('set project', async () => {
+    const idx = 1
+    const sheetId = gradeSheets[idx]._id
+    const projectId = new Types.ObjectId()
+    await service.setProject(sheetId, projectId)
+    expect(gradeSheets[idx].projectID).toBe(projectId)
   })
 
   test('set mentor reviewers', async () => {
@@ -170,10 +307,34 @@ describe('Test GradeSheetService ', () => {
       expect(gradeSheets[idx].mentorGrades[name]).toEqual(grades[name])
     for (let name in sheet.mentorGrades)
       if (!(name in grades))
+        expect(gradeSheets[idx].mentorGrades[name]).toBe(undefined)
+    expect(await service.setMentorGrades(Types.ObjectId(), grades)).toBeNull()
+  })
+
+  test('patch mentor grade', async () => {
+    const idx = 7
+    const sheet: GradeSheet = _.cloneDeep(gradeSheets[idx])
+    const sheetId = gradeSheets[idx]._id
+    const grades = {
+      ExtraGrade: { points: 111 },
+      Design: { points: 10 },
+      repo: { points: 9 },
+      App: { points: 10 },
+    }
+    await service.patchMentorGrades(sheetId, grades)
+    for (let name in grades)
+      expect(gradeSheets[idx].mentorGrades[name]).toEqual(grades[name])
+    for (let name in sheet.mentorGrades)
+      if (!(name in grades))
         expect(gradeSheets[idx].mentorGrades[name]).toEqual(
           sheet.mentorGrades[name],
         )
     expect(await service.setMentorGrades(Types.ObjectId(), grades)).toBeNull()
+
+    expect(sheet.mentorGrades['extra']).not.toBe(undefined)
+    await service.patchMentorGrades(sheetId, grades, ['extra'])
+    const newSheet = await service.getMentorGradeSheet(`${sheetId}`, `${sheet.mentorID}`)
+    expect(newSheet.mentorGrades['extra']).toBe(undefined)
   })
 
   test('get/set mentor reviewer grades', async () => {
@@ -189,14 +350,15 @@ describe('Test GradeSheetService ', () => {
       App: { points: 13 },
     }
     await service.setMentorReviewerGrades(sheetId, mentorId, setGrades)
-    const reviewerGrades = await service.getReviewerGrades(sheetId, mentorId)
+    const reviewerGrades = await service.getReviewerGrades(
+      `${sheetId}`,
+      `${mentorId}`,
+    )
     for (let name in setGrades)
       expect(reviewerGrades.grades[name]).toBe(setGrades[name])
-    for (let name in reviewerGrades.grades)
+    for (let name in prevSheet.mentorReviewerGrades[0].grades)
       if (!(name in setGrades))
-        expect(reviewerGrades.grades[name]).toEqual(
-          prevSheet.mentorReviewerGrades[mentorIdx].grades[name],
-        )
+        expect(reviewerGrades.grades[name]).toBe(undefined)
     expect(
       await service.setMentorReviewerGrades(
         Types.ObjectId(),
@@ -213,13 +375,69 @@ describe('Test GradeSheetService ', () => {
     ).toBeNull()
   })
 
+  test('patch mentor reviewer grades', async () => {
+    const idx = 7
+    const prevSheet: GradeSheet = _.cloneDeep(gradeSheets[idx])
+    const sheetId = gradeSheets[idx]._id
+    const mentorIdx = 0
+    const mentorId = gradeSheets[idx].reviewers[0]
+    const setGrades = {
+      ExtraGrade: { points: 33 },
+      Design: { points: 11 },
+      repo: { points: 12 },
+      App: { points: 13 },
+    }
+    await service.patchMentorReviewerGrades(sheetId, mentorId, setGrades)
+    const reviewerGrades = await service.getReviewerGrades(
+      `${sheetId}`,
+      `${mentorId}`,
+    )
+    for (let name in setGrades)
+      expect(reviewerGrades.grades[name]).toBe(setGrades[name])
+    for (let name in prevSheet.mentorReviewerGrades[0].grades)
+      if (!(name in setGrades))
+        expect(reviewerGrades.grades[name]).toEqual(
+          prevSheet.mentorReviewerGrades[mentorIdx].grades[name],
+        )
+    
+    let sheet = await service.getReviewerGradeSheet(
+      `${sheetId}`,
+      `${mentorId}`,
+    )
+    expect(sheet.mentorReviewerGrades[0].grades['extra']).not.toBe(undefined)
+    await service.patchMentorReviewerGrades(sheetId, mentorId, setGrades, ['extra'])
+    sheet = await service.getReviewerGradeSheet(
+      `${sheetId}`,
+      `${mentorId}`,
+    )
+    const sheets = await service.getReviewerGradeSheets(`${mentorId}`)
+    expect(sheets).toHaveLength(1)
+    expect(sheet.reviewers[0].id).toBe(`${mentorId}`)
+    expect(sheet.mentorReviewerGrades[0].grades['extra']).toBe(undefined)
+
+    expect(
+      await service.patchMentorReviewerGrades(
+        Types.ObjectId(),
+        mentorId,
+        setGrades,
+      ),
+    ).toBeNull()
+    expect(
+      await service.patchMentorReviewerGrades(
+        sheetId,
+        Types.ObjectId(),
+        setGrades,
+      ),
+    ).toBeNull()
+  })
+
   test('delete sheet', async () => {
     const deletedId = gradeSheets[0]._id
     await service.deleteGradeSheet(deletedId)
-    gradeSheets = await service.getGradeSheets()
-    expect(
-      gradeSheets.findIndex((sheet: Document) => sheet._id === deletedId),
-    ).toBe(-1)
+    const sheet: GradeSheetDto | null = await service.findGradeSheetById(
+      `${deletedId}`,
+    )
+    expect(sheet).toBe(null)
   })
 
   test('get/set/update/delete participants', async () => {
@@ -238,19 +456,24 @@ describe('Test GradeSheetService ', () => {
 
     const engagement = 100
     const participants = [
-      { participantID, engagement },
-      { participantID: Types.ObjectId(), engagement },
+      { id: participantID, engagement },
+      { id: new Types.ObjectId(), engagement },
     ]
-    await service.updateParticipants(sheetId, participants)
+    await service.updateParticipants(`${sheetId}`, participants)
     expect(
-      await service.updateParticipants(Types.ObjectId(), participants),
+      await service.updateParticipants(`${new Types.ObjectId()}`, participants),
     ).toBeNull()
     expect(gradeSheets[idx].participants[0].engagement).toBe(engagement)
 
-    const newParticipants = [
-      { participantID },
-      { participantID: Types.ObjectId() },
-    ]
+    const sheet = await service.getParticipantGradeSheet(
+      `${sheetId}`,
+      `${participantID}`,
+    )
+    const sheets = await service.getParticipantGradeSheets(`${participantID}`)
+    expect(sheets).toHaveLength(1)
+    expect(sheet.participants[0].id).toBe(`${participantID}`)
+
+    const newParticipants = [{ id: participantID }, { id: Types.ObjectId() }]
     await service.setParticipants(sheetId, newParticipants)
     expect(
       await service.setParticipants(Types.ObjectId(), newParticipants),
