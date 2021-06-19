@@ -1,7 +1,8 @@
-import GradeSheetModel, { Participant, Grade } from '../Models/GradeSheet'
+import { Grade } from '../Models/GradeSheet'
 import GradeSheetService from '../Services/GradeSheetService'
 import { Request, Response } from 'express'
 import * as mongoose from 'mongoose'
+import { ParticipantDto, UpdateParticipantsDto } from '../Models/DTO/GradeSheetDto'
 
 export default class GradeSheetController {
   gradeSheetService: GradeSheetService
@@ -10,7 +11,7 @@ export default class GradeSheetController {
   }
 
   getGradeSheet = async (req: Request, res: Response) => {
-    const id = new mongoose.Types.ObjectId(req.params.id)
+    const id = req.params.id
     const sheet = await this.gradeSheetService.findGradeSheetById(id)
     if (!sheet)
       return res.status(404).json({ message: 'Grade sheet not found' })
@@ -22,33 +23,60 @@ export default class GradeSheetController {
     res.status(200).json(sheets)
   }
 
-  getReviewerGrades = async (req: Request, res: Response) => {
-    const id = new mongoose.Types.ObjectId(req.params.id)
-    const mentorId = new mongoose.Types.ObjectId(req.params.mentorId)
-    const sheet = await this.gradeSheetService.getReviewerGrades(id, mentorId)
-    if (!sheet)
-      return res.status(404).json({ message: 'Grade sheet not found' })
-    res.status(200).json(sheet.grades)
-  }
-
   getParticipantGradeSheets = async (req: Request, res: Response) => {
-    const userId = new mongoose.Types.ObjectId(req.params.id)
+    const userId = req.params.id
     const sheets = await this.gradeSheetService.getParticipantGradeSheets(
       userId,
     )
     res.status(200).json(sheets)
   }
 
+  getParticipantGradeSheet = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const userId = req.params.userId
+    const sheet = await this.gradeSheetService.getParticipantGradeSheet(id, userId)
+    if (!sheet)
+      return res.status(404).json({ message: 'Grade sheet not found' })
+    res.status(200).json(sheet)
+  }
+
   getMentorGradeSheets = async (req: Request, res: Response) => {
-    const userId = new mongoose.Types.ObjectId(req.params.id)
+    const userId = req.params.id
     const sheets = await this.gradeSheetService.getMentorGradeSheets(userId)
     res.status(200).json(sheets)
   }
 
+  getMentorGradeSheet = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const userId = req.params.userId
+    const sheet = await this.gradeSheetService.getMentorGradeSheet(id, userId)
+    if (!sheet)
+      return res.status(404).json({ message: 'Grade sheet not found' })
+    res.status(200).json(sheet)
+  }
+
   getReviewerGradeSheets = async (req: Request, res: Response) => {
-    const userId = new mongoose.Types.ObjectId(req.params.id)
+    const userId = req.params.id
     const sheets = await this.gradeSheetService.getReviewerGradeSheets(userId)
     res.status(200).json(sheets)
+  }
+
+  getReviewerGradeSheet = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const userId = req.params.userId
+    const sheet = await this.gradeSheetService.getReviewerGradeSheet(id, userId)
+    if (!sheet)
+      return res.status(404).json({ message: 'Grade sheet not found' })
+    res.status(200).json(sheet)
+  }
+
+  getReviewerGrades = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const mentorId = req.params.mentorId
+    const sheet = await this.gradeSheetService.getReviewerGrades(id, mentorId)
+    if (!sheet)
+      return res.status(404).json({ message: 'Grade sheet not found' })
+    res.status(200).json(sheet.grades)
   }
 
   addMentorReviewer = async (req: Request, res: Response) => {
@@ -113,9 +141,11 @@ export default class GradeSheetController {
       ? new mongoose.Types.ObjectId(req.params.mentorId)
       : null
     const grades: { [gradeName: string]: Grade } = req.body.grades
+    const gradesToDelete: string[] = req.body.gradesToDelete ?? []
     const sheet = await this.gradeSheetService.patchMentorGrades(
       id,
       grades,
+      gradesToDelete,
       mentorId,
     )
     if (sheet === null)
@@ -145,10 +175,12 @@ export default class GradeSheetController {
     const id = new mongoose.Types.ObjectId(req.params.id)
     const mentorId = new mongoose.Types.ObjectId(req.params.mentorId)
     const grades: { [gradeName: string]: Grade } = req.body.grades
+    const gradesToDelete: string[] = req.body.gradesToDelete ?? []
     const sheet = await this.gradeSheetService.patchMentorReviewerGrades(
       id,
       mentorId,
       grades,
+      gradesToDelete,
     )
     if (sheet === null)
       return res
@@ -167,13 +199,8 @@ export default class GradeSheetController {
   }
 
   updateParticipants = async (req: Request, res: Response) => {
-    const id = new mongoose.Types.ObjectId(req.params.id)
-    const participants: Participant[] = req.body.participants.map(
-      (part: Participant) => ({
-        ...part,
-        participantID: new mongoose.Types.ObjectId(part.participantID),
-      }),
-    )
+    const id = req.params.id
+    const participants: UpdateParticipantsDto = req.body.participants
     const sheet = await this.gradeSheetService.updateParticipants(
       id,
       participants,
@@ -183,14 +210,23 @@ export default class GradeSheetController {
     res.status(200).json({ message: 'Participants updated' })
   }
 
+  updateParticipantsForMentor = async (req: Request, res: Response) => {
+    const id = req.params.id
+    const mentorId = req.params.mentorId
+    const participants: UpdateParticipantsDto = req.body.participants
+    const sheet = await this.gradeSheetService.updateParticipants(
+      id,
+      participants,
+      mentorId,
+    )
+    if (sheet === null)
+      return res.status(404).json({ message: 'Grade sheet not found' })
+    res.status(200).json({ message: 'Participants updated' })
+  }
+
   setParticipants = async (req: Request, res: Response) => {
     const id = new mongoose.Types.ObjectId(req.params.id)
-    const participants: Participant[] = req.body.participants.map(
-      (part: Participant) => ({
-        ...part,
-        participantID: new mongoose.Types.ObjectId(part.participantID),
-      }),
-    )
+    const participants: UpdateParticipantsDto = req.body.participants
     const sheet = await this.gradeSheetService.setParticipants(id, participants)
     if (sheet === null)
       return res.status(404).json({ message: 'Grade sheet not found' })
@@ -221,9 +257,7 @@ export default class GradeSheetController {
 
   createGradeSheet = async (req: Request, res: Response) => {
     try {
-      const sheet = new GradeSheetModel(req.body)
-      await sheet.validate()
-      await this.gradeSheetService.createGradeSheet(sheet)
+      await this.gradeSheetService.createGradeSheet(req.body)
       res.status(201).json({ message: 'Grade sheet created' })
     } catch (err) {
       if (err.name === 'ValidationError')
