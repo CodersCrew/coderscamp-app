@@ -9,19 +9,27 @@ export interface Grades {
 }
 
 export interface Participant {
-  participantID: string
+  id: string
+  name: string
+  surname: string
   engagement?: number
   role?: string
   rolePoints?: number
-  name?: string
-  surname?: string
 }
 
-export interface Reviewer {
-  _id: string
-  email: string
+export interface ReviewerDto {
+  id: string
   name: string
-  surname: string
+  email: string
+}
+
+export interface GradeSheetDto {
+  id: string
+  projectId: string
+  projectName: string
+  mentorId: string
+  mentorName: string
+  mentorSurname: string
 }
 
 export interface GradeSheetData {
@@ -37,20 +45,33 @@ export interface GradeSheetData {
   }[]
 }
 
-export interface GradeSheet {
+export interface GradeSheetDetailsDto {
   id: string
-  projectID: string
+  projectId: string
   projectName: string
   projectUrl: string
   projectDescription: string
-  mentorID: string
+  mentorId: string
   mentorName: string
-  mentorSurname: string
-  participants: Participant[]
-  reviewers: Reviewer[]
   mentorGrades: Grades
+  participants: Participant[]
+  reviewers: ReviewerDto[]
   mentorReviewerGrades: {
     mentorID: string
     grades: Grades
   }[]
 }
+
+export interface Reviewer {
+  id: string
+  name: string
+  email: string
+  grades: Grades
+}
+
+export type GradeSheetDetails = {
+  [P in Exclude<
+    keyof GradeSheetDetailsDto,
+    'mentorReviewerGrades' | 'reviewers'
+  >]: GradeSheetDetailsDto[P]
+} & { reviewers: Reviewer[] }
