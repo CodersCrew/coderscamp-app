@@ -64,7 +64,6 @@ export default class GradeSheetService {
 
   async findGradeSheetById(id: string): Promise<GradeSheetDto | null> {
     const sheet = await this.repository.find({ id })
-    console.log(sheet[0])
     return transformToGradeSheetDto(sheet)
   }
 
