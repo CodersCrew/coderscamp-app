@@ -2,7 +2,8 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { Container, CssBaseline, Paper } from '@material-ui/core'
 import { GridValueFormatterParams } from '@material-ui/data-grid'
-import styles from './ManageSections.module.css'
+import { useSelector } from 'react-redux'
+
 import SelectSortBy from '../../../components/SelectSortBy'
 import SearchInput from '../../../components/SearchInput'
 import ReusableTable from '../../../components/ReusableTable'
@@ -11,13 +12,19 @@ import PageHeader from '../../../components/PageHeader'
 import { searchSection, sortSections, useSections } from '../../../hooks'
 import { ManageSection } from '../../../models'
 import { displayFormattedDate } from '../../../api'
+import { RootState } from '../../../app/store'
+
+import styles from './ManageSections.module.css'
 
 export interface ManageSectionsProps {}
 
 const ManageSections: React.FC<ManageSectionsProps> = () => {
   const history = useHistory()
   const tableName = 'Sections'
-  const { data: sections, isLoading, isFetching, error } = useSections()
+  const courseId = useSelector(
+    (state: RootState) => state.courseList.activeCourse?._id || '',
+  )
+  const { data: sections, isLoading, isFetching, error } = useSections(courseId)
 
   const changeSortBy = (value: string) => {
     sortSections(value as keyof ManageSection)

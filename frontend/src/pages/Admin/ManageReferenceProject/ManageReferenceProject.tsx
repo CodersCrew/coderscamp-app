@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, LinearProgress } from '@material-ui/core'
 import { match, useHistory, useParams } from 'react-router-dom'
 import { GridValueFormatterParams } from '@material-ui/data-grid'
+import { useSelector } from 'react-redux'
 
 import EditableField from '../../../components/EditableField'
 import UButton from '../../../components/UButton'
@@ -19,6 +20,7 @@ import DetailPage from '../../../components/DetailPage'
 import { Section } from '../../../models'
 import FindModal from '../../../components/FindModal'
 import { displayFormattedDate } from '../../../api'
+import { RootState } from '../../../app/store'
 
 import { InputValues } from './types'
 import styles from './ManageReferenceProject.module.css'
@@ -41,6 +43,9 @@ const initialValues = {
 const ManageReferenceProject = (props: ManageReferenceProjectProps) => {
   const { projectID } = useParams<{ projectID: string }>()
   const history = useHistory()
+  const courseId = useSelector(
+    (state: RootState) => state.courseList.activeCourse?._id || '',
+  )
 
   const [isEdit, setIsEdit] = useState(false)
   const [isAdding, setIsAdding] = useState(false)
@@ -61,7 +66,7 @@ const ManageReferenceProject = (props: ManageReferenceProjectProps) => {
   useProjects()
 
   const [isOpenSectionsModal, setIsOpenSectionsModal] = useState(false)
-  const sectionsQuery = useSections({
+  const sectionsQuery = useSections(courseId, {
     enabled: isOpenSectionsModal,
   })
 

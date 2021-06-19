@@ -5,8 +5,10 @@ import { useQuery, UseQueryOptions } from 'react-query'
 
 const queryKey = 'sections'
 
-const useSections = (options?: Partial<UseQueryOptions<ManageSection[]>>) =>
-  useQuery(queryKey, () => api.getSections(), options)
+const useSections = (
+  courseId: string,
+  options?: Partial<UseQueryOptions<ManageSection[]>>,
+) => useQuery(queryKey, () => api.getSectionsByCourseId(courseId), options)
 export default useSections
 
 export const searchSection = genericSearch<ManageSection>(queryKey)

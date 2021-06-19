@@ -1,5 +1,9 @@
 import api from './api.service'
-import { CourseForSection, CourseDataForSection } from '../models/Course.model'
+import {
+  CourseForSection,
+  CourseDataForSection,
+  CourseDto,
+} from '../models/Course.model'
 import {
   ManageSection,
   ManageSectionData,
@@ -37,10 +41,10 @@ export const getSections = async (): Promise<ManageSection[]> => {
 export const getSectionsByCourseId = async (
   id: string,
 ): Promise<ManageSection[]> => {
-  const courseResponse = await api.get(`/courses/${id}`)
-  const course = courseResponse.data as CourseDataForSection
-  const sections = (await api.get(`/courses/${id}/sections`))
-    .data as ManageSectionData[]
+  const { data: sections } = await api.get<
+    Array<ManageSectionData & { course: CourseDto }>
+  >(`/courses/${id}/sections`)
+
   return sections.map((section) => {
     return {
       id: section._id,
@@ -51,8 +55,8 @@ export const getSectionsByCourseId = async (
       endDate: section.endDate
         ? new Date(section.endDate).getTime() / 1000
         : undefined,
-      courseName: course ? course.name : '',
-      courseId: course?._id || '',
+      courseName: section.course.name,
+      courseId: section.course._id,
     }
   })
 }
@@ -95,8 +99,10 @@ export const getSection = async (id: string): Promise<Section | null> => {
   }
 }
 
-export const getOneSection = async (id: string): Promise<ManageSection | null> => {
-  if(!id) return null
+export const getOneSection = async (
+  id: string,
+): Promise<ManageSection | null> => {
+  if (!id) return null
   const section = (await api.get(`/sections/${id}`)).data as ManageSectionData
   let course = null
   if (section.course) {
