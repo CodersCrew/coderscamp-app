@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { AxiosResponse } from 'axios'
-import { setActiveCourse } from '../../Admin/CourseList/CourseListSlice'
-
 import {
   Button,
   CssBaseline,
@@ -12,12 +10,14 @@ import {
   Container,
   CircularProgress,
 } from '@material-ui/core'
+import { setActiveCourse } from '../../Admin/CourseList/CourseListSlice'
 import StyledTextField from '../../../components/StyledTextField'
-import useStyles from './LogIn.style'
 import HeaderRegistration from '../../../components/HeaderRegistration'
 import { useAppDispatch, fetchCoursesAndSort } from '../../../hooks'
 import useSnackbar from '../../../hooks/useSnackbar'
 import { api } from '../../../api'
+import useStyles from './LogIn.style'
+import { FormValues, loginResponseData } from './types'
 
 export interface LogInProps {
   onLogin?: Function
@@ -38,12 +38,14 @@ export default function SignIn({ onLogin }: LogInProps) {
     history.push(path)
   }
 
-  const setResponseDataToLocalStorage = ({ data }: AxiosResponse) => {
+  const setResponseDataToLocalStorage = ({
+    data,
+  }: AxiosResponse<loginResponseData>) => {
     const userId = data?.['_id']
     const userType = data?.['type']
 
     localStorage.setItem('id', userId)
-    localStorage.setItem('type', userType)
+    localStorage.setItem('type', String(userType))
   }
 
   const validateForm = () => {
@@ -56,18 +58,26 @@ export default function SignIn({ onLogin }: LogInProps) {
     return validEmailLength && validPasswordLength
   }
 
-  const handleFormChange = (e: any) => {
-    setForm((prevState) => ({ ...prevState, [e.target.name]: e.target.value }))
+  const handleFormChange = (
+    e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setForm((prevState) => ({
+      ...prevState,
+      [e.currentTarget.name]: e.currentTarget.value,
+    }))
   }
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!validateForm()) return
 
     setLoading(true)
     try {
-      const response = await api.post('login', form)
+      const response = await api.post<FormValues, loginResponseData>(
+        'login',
+        form,
+      )
       setResponseDataToLocalStorage(response)
       const courses = await fetchCoursesAndSort()
       const mostRecentCourse = courses[0]
@@ -75,9 +85,7 @@ export default function SignIn({ onLogin }: LogInProps) {
       routeChange()
       if (onLogin) onLogin()
     } catch (error) {
-      showError(
-        error?.response?.data?.message ?? 'Error while trying to sign in',
-      )
+      showError(error?.response.data.message || 'Error while trying to sign in')
     }
     setLoading(false)
   }

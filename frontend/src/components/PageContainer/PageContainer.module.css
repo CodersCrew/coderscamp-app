@@ -1,0 +1,7 @@
+.pageContainer {
+  display: flex;
+  margin: auto;
+  text-align: left;
+  flex-direction: column;
+  font-family: Arial, Helvetica, sans-serif;
+}

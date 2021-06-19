@@ -757,7 +757,7 @@ paths:
           description: User was deleted
         404:
           description: Team not found
-  /teams/{id}/users:
+  /teams/{id}/user:
     post:
       tags:
         - team
@@ -779,6 +779,32 @@ paths:
       responses:
         200:
           description: User added to team
+          schema:
+            $ref: '#/definitions/Team'
+        404:
+          description: Team not found
+  /teams/{id}/users:
+    post:
+      tags:
+        - team
+      summary: Add users to a team
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          type: string
+          required: true
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/UsersIds'
+      responses:
+        200:
+          description: Users added to team
           schema:
             $ref: '#/definitions/Team'
         404:
@@ -1455,6 +1481,10 @@ definitions:
         type: number
         default: 0
         example: 0
+  UsersIds:
+    type: array
+    items:
+      type: string
   Grade:
     type: object
     properties:

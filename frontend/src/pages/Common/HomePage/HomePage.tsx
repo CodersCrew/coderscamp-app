@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styles from './HomePage.module.css'
 import NotificationsIcon from '@material-ui/icons/Notifications'
 import PageHeader from '../../../components/PageHeader'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface HomePageProps {}
 
@@ -13,7 +14,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   }, [])
 
   return (
-    <div className={styles.container}>
+    <PageContainer>
       <PageHeader name="Homepage" />
       <div className={styles.description}>
         <div>
@@ -37,7 +38,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
           )}
         </div>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 

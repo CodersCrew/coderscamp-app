@@ -1,6 +1,6 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, CssBaseline, Paper } from '@material-ui/core'
+import { Paper } from '@material-ui/core'
 import { GridValueFormatterParams } from '@material-ui/data-grid'
 import { useSelector } from 'react-redux'
 
@@ -12,6 +12,7 @@ import PageHeader from '../../../components/PageHeader'
 import { searchSection, sortSections, useSections } from '../../../hooks'
 import { ManageSection } from '../../../models'
 import { displayFormattedDate } from '../../../api'
+import { PageContainer } from '../../../components/PageContainer'
 import { RootState } from '../../../app/store'
 
 import styles from './ManageSections.module.css'
@@ -71,8 +72,7 @@ const ManageSections: React.FC<ManageSectionsProps> = () => {
   ]
 
   return (
-    <Container className={styles.manageSections} aria-label="Manage Sections">
-      <CssBaseline />
+    <PageContainer label="Manage Sections">
       <PageHeader name="Sections">
         <SearchInput
           onSubmit={changeSearch}
@@ -93,19 +93,18 @@ const ManageSections: React.FC<ManageSectionsProps> = () => {
             />
           </span>
         </div>
-        <div className={styles.table}>
-          <ReusableTable
-            name={tableName}
-            columns={columns}
-            onRowClick={handleRowClick}
-            data={sections}
-            isFetching={isFetching}
-            isLoading={isLoading}
-            error={error}
-          />
-        </div>
+
+        <ReusableTable
+          name={tableName}
+          columns={columns}
+          onRowClick={handleRowClick}
+          data={sections}
+          isFetching={isFetching}
+          isLoading={isLoading}
+          error={error}
+        />
       </Paper>
-    </Container>
+    </PageContainer>
   )
 }
 

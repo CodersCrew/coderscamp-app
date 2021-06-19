@@ -28,6 +28,7 @@ import useCourse, { updateCourseAsync } from '../../../hooks/useQuery/useCourse'
 import { useAppSelector } from '../../../hooks/hooks'
 import { resetSectionsToDelete } from './CourseDetailsSlice'
 import { useMutationWithConfirm } from '../../../hooks'
+import { PageContainer } from '../../../components/PageContainer'
 
 export interface CourseProps {
   id: string
@@ -102,7 +103,7 @@ const CourseComponent = ({ match }: RouteComponentProps<CourseProps>) => {
   if (error) return <div>{(error as Error).message}</div>
 
   return (
-    <div className={classes.root}>
+    <PageContainer label="Manage Course">
       <PageHeader>
         <ReusableGoBack
           pageName="Course"
@@ -238,7 +239,7 @@ const CourseComponent = ({ match }: RouteComponentProps<CourseProps>) => {
           ) : null}
         </Box>
       </div>
-    </div>
+    </PageContainer>
   )
 }
 
@@ -246,12 +247,6 @@ export default CourseComponent
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      '& .MuiTextField-root': {
-        margin: theme.spacing(1),
-        width: '90%',
-      },
-    },
     nameInput: {
       '&.MuiTextField-root': {
         width: '100%',
