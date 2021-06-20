@@ -1,15 +1,12 @@
 import api from './api.service'
-import {
-  CourseForSection,
-  CourseDataForSection,
-  CourseDto,
-} from '../models/Course.model'
+import { CourseForSection, CourseDataForSection } from '../models/Course.model'
 import {
   ManageSection,
   ManageSectionData,
   NewSectionData,
   Section,
   SectionData,
+  SectionDTO,
 } from '../models/Section.model'
 import {
   ProjectForSection,
@@ -17,33 +14,12 @@ import {
 } from '../models/Project.model'
 import { AxiosResponse } from 'axios'
 
-export const getSections = async (): Promise<ManageSection[]> => {
-  const coursesResponse = await api.get('/courses')
-  const courses = coursesResponse.data as CourseDataForSection[]
-  const sections = (await api.get('/sections')).data as ManageSectionData[]
-  return sections.map((section) => {
-    const course = courses.find((course) => course._id === section.course)
-    return {
-      id: section._id,
-      name: section.name,
-      startDate: section.startDate
-        ? new Date(section.startDate).getTime() / 1000
-        : undefined,
-      endDate: section.endDate
-        ? new Date(section.endDate).getTime() / 1000
-        : undefined,
-      courseName: course ? course.name : '',
-      courseId: course?._id || '',
-    }
-  })
-}
-
 export const getSectionsByCourseId = async (
   id: string,
 ): Promise<ManageSection[]> => {
-  const { data: sections } = await api.get<
-    Array<ManageSectionData & { course: CourseDto }>
-  >(`/courses/${id}/sections`)
+  const { data: sections } = await api.get<SectionDTO[]>(
+    `/courses/${id}/sections`,
+  )
 
   return sections.map((section) => {
     return {

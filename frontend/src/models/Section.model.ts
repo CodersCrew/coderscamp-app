@@ -1,3 +1,5 @@
+import { CourseDto } from './Course.model'
+
 export interface ManageSectionData {
   _id: string
   name: string
@@ -31,4 +33,16 @@ export interface SectionData {
 export interface Section {
   id: string
   name: string
+}
+
+export interface SectionDTO {
+  _id: string
+  course: CourseDto
+  description: string
+  materials: []
+  name: string
+  startDate: string
+  endDate: string
+  testDate: string
+  tests: []
 }
