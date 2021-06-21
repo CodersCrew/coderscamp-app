@@ -11,7 +11,7 @@ import DeleteButton from '../../../components/DeleteButton'
 import PageHeader from '../../../components/PageHeader'
 import ReusableGoBack from '../../../components/ReusableGoBack'
 import {
-  useAddUserToTeam,
+  useAddUsersToTeam,
   useDeleteUserFromTeam,
   useParticipantsNotInTeam,
   useSetMentor,
@@ -28,9 +28,10 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
   const [openUsersModal, setOpenUsersModal] = useState<boolean>(false)
 
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+  const [selectedAddUsers, setSelectedAddUsers] = useState<string[]>([])
 
   let { teamId } = useParams<{ teamId: string }>()
-  const { data: team, isLoading, isFetching, error } = useTeam(teamId)
+  const { data: team, isLoading, error } = useTeam(teamId)
   const participantsNotInTeamQuery = useParticipantsNotInTeam({
     enabled: openUsersModal,
   })
@@ -38,7 +39,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
     enabled: openMentorsModal,
   })
   const { mutate: setMentor } = useSetMentor()
-  const { mutate: addUserToTeam } = useAddUserToTeam()
+  const { mutate: addUsersToTeam } = useAddUsersToTeam()
   const { mutate: deleteUserFromTeam } = useDeleteUserFromTeam()
 
   const handleMentorSelection = (row: User) => {
@@ -46,9 +47,9 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
     setMentor([teamId, row.id])
   }
 
-  const handleAddUserSelection = (row: User) => {
+  const onAddUsersSave = () => {
     setOpenUsersModal(false)
-    addUserToTeam([teamId, row.id])
+    addUsersToTeam([teamId, selectedAddUsers])
   }
 
   const columns = [
@@ -65,6 +66,10 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
 
   const handleUserSelection = (params: GridSelectionModelChangeParams) => {
     setSelectedUsers(params.selectionModel as string[])
+  }
+
+  const handleAddUserSelection = (params: GridSelectionModelChangeParams) => {
+    setSelectedAddUsers(params.selectionModel as string[])
   }
 
   const deleteSelectedUsers = () => {
@@ -146,7 +151,10 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
         <div className={styles.manageContainer}>
           {openUsersModal && (
             <FindModal<User>
-              onRowSelection={handleAddUserSelection}
+              isCheckboxSelection
+              isSaveButton
+              onSaveButton={onAddUsersSave}
+              handleUserSelection={handleAddUserSelection}
               query={participantsNotInTeamQuery}
               queryKey="participantsNotInTeam"
               columns={participantColumns}
@@ -177,7 +185,6 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
           columns={columns}
           data={team?.users}
           isLoading={isLoading}
-          isFetching={isFetching}
           error={error}
           checkboxSelection={true}
           onSelectionModelChange={handleUserSelection}
@@ -190,7 +197,6 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
           columns={projectColumns}
           data={team?.projects}
           isLoading={isLoading}
-          isFetching={isFetching}
           error={error}
         />
       </Paper>

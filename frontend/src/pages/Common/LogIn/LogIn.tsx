@@ -58,13 +58,10 @@ export default function SignIn({ onLogin }: LogInProps) {
     return validEmailLength && validPasswordLength
   }
 
-  const handleFormChange = (
-    e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    setForm((prevState) => ({
-      ...prevState,
-      [e.currentTarget.name]: e.currentTarget.value,
-    }))
+  const handleFormChange = (e: {
+    target: HTMLInputElement | HTMLTextAreaElement
+  }) => {
+    setForm((prevState) => ({ ...prevState, [e.target.name]: e.target.value }))
   }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

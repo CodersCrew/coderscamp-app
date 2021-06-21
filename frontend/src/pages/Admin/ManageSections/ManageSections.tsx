@@ -25,7 +25,7 @@ const ManageSections: React.FC<ManageSectionsProps> = () => {
   const courseId = useSelector(
     (state: RootState) => state.courseList.activeCourse?._id || '',
   )
-  const { data: sections, isLoading, isFetching, error } = useSections(courseId)
+  const { data: sections, isLoading, error } = useSections(courseId)
 
   const changeSortBy = (value: string) => {
     sortSections(value as keyof ManageSection)
@@ -99,7 +99,6 @@ const ManageSections: React.FC<ManageSectionsProps> = () => {
           columns={columns}
           onRowClick={handleRowClick}
           data={sections}
-          isFetching={isFetching}
           isLoading={isLoading}
           error={error}
         />

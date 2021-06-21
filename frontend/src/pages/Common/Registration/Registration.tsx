@@ -93,7 +93,9 @@ export function Registration() {
     )
   }
 
-  const handleFormChange = (e: any) => {
+  const handleFormChange = (e: {
+    target: HTMLInputElement | HTMLTextAreaElement
+  }) => {
     setForm((prevState) => ({ ...prevState, [e.target.name]: e.target.value }))
   }
 
