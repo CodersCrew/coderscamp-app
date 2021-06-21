@@ -21,7 +21,7 @@ export interface GradeSheetParticipantsProps {}
 export const GradeSheetParticipants: React.FC<GradeSheetParticipantsProps> = () => {
   const participantsTableName = 'Participants'
   let { sheetId } = useParams<{ sheetId: string }>()
-  const { data: sheet, error, isLoading, isFetching } = useSheet(sheetId)
+  const { data: sheet, error, isLoading } = useSheet(sheetId)
   const selectedParticipants = useRef<string[]>([])
   const [openUsersModal, setOpenUsersModal] = useState<boolean>(false)
   const { mutate: addParticipant } = useAddUserToSheet(sheetId, {})
@@ -91,7 +91,6 @@ export const GradeSheetParticipants: React.FC<GradeSheetParticipantsProps> = () 
             })) ?? []
           }
           isLoading={isLoading}
-          isFetching={isFetching}
           error={error}
           checkboxSelection={true}
           onSelectionModelChange={handleParticipantSelection}

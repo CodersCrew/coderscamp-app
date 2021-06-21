@@ -35,7 +35,7 @@ export const GradeSheetMentorGrades: React.FC<GradeSheetMentorGradesProps> = () 
   })
 
   let { sheetId } = useParams<{ sheetId: string }>()
-  const { data: sheet, error, isLoading, isFetching } = useSheet(sheetId)
+  const { data: sheet, error, isLoading } = useSheet(sheetId)
   const { mutate: patchMentorGrade } = usePatchMentorGrade(sheetId, {})
   const handleGradeSelection = (row: GridSelectionModelChangeParams) => {
     selectedGrades.current = row.selectionModel as string[]
@@ -110,7 +110,6 @@ export const GradeSheetMentorGrades: React.FC<GradeSheetMentorGradesProps> = () 
           columns={gradeColumns}
           data={gradesObjectToArray(sheet?.mentorGrades ?? {})}
           isLoading={isLoading}
-          isFetching={isFetching}
           error={error}
           onSelectionModelChange={handleGradeSelection}
           onRowClick={(params) =>

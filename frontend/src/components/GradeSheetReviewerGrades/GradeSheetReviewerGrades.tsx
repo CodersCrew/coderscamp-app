@@ -34,7 +34,7 @@ export const GradeSheetReviewerGrades: React.FC<GradeSheetReviewerGradesProps> =
   const [editedGradeId, setEditedGradeId] = useState('')
 
   let { sheetId } = useParams<{ sheetId: string }>()
-  const { data: sheet, error, isLoading, isFetching } = useSheet(sheetId)
+  const { data: sheet, error, isLoading } = useSheet(sheetId)
   const { mutate: patchMentorReviewerGrade } = usePatchMentorReviewerGrade(
     sheetId,
     {},
@@ -121,7 +121,6 @@ export const GradeSheetReviewerGrades: React.FC<GradeSheetReviewerGradesProps> =
               columns={gradeColumns}
               data={gradesObjectToArray(g.grades ?? {})}
               isLoading={isLoading}
-              isFetching={isFetching}
               error={error}
               onSelectionModelChange={handleGradeSelection}
               onRowClick={(params) => {
