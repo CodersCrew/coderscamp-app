@@ -79,14 +79,8 @@ export const getOneSection = async (
   id: string,
 ): Promise<ManageSection | null> => {
   if (!id) return null
-  const section = (await api.get(`/sections/${id}`)).data as ManageSectionData
-  let course = null
-  if (section.course) {
-    try {
-      const coursesResponse = await api.get(`/courses/${section.course}`)
-      course = coursesResponse.data as CourseDataForSection
-    } catch (e) {}
-  }
+  const { data: section } = await api.get<SectionDTO>(`/sections/${id}`)
+
   return {
     id: section._id,
     name: section.name,
@@ -97,8 +91,8 @@ export const getOneSection = async (
       ? new Date(section.endDate).getTime() / 1000
       : undefined,
     description: section.description,
-    courseName: course ? course.name : '',
-    courseId: course?._id || '',
+    courseName: section.course.name,
+    courseId: section.course._id,
   }
 }
 
