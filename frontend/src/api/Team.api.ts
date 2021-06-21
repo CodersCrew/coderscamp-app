@@ -122,7 +122,11 @@ export const setMentor = async (teamId: string, mentorId: string) => {
 }
 
 export const addUserToTeam = async (teamId: string, userId: string) => {
-  await api.post(`teams/${teamId}/users`, { userId })
+  await api.post(`teams/${teamId}/user`, { userId })
+}
+
+export const addUsersToTeam = async (teamId: string, users: string[]) => {
+  await api.post(`teams/${teamId}/users`, users)
 }
 
 export const deleteUserFromTeam = async (teamId: string, userId: string) => {

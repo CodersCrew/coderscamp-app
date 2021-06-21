@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Backdrop, CssBaseline, Fade, Modal } from '@material-ui/core'
+import { Backdrop, Fade, Modal } from '@material-ui/core'
 
 import ReusableTable from '../ReusableTable'
 import SearchInput from '../SearchInput'
@@ -7,35 +7,44 @@ import SearchInput from '../SearchInput'
 import styles from './FindModal.module.css'
 import { UseQueryResult } from 'react-query'
 import { genericSearch } from '../../hooks/useQuery/useGenericQuery'
-
+import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
+import AddButton from '../AddButton'
 
 interface FindModalProps<T> {
-  onRowSelection: any
+  onRowSelection?: any
   query: UseQueryResult<T[]>
   columns: { field: string; width: number; fieldName?: string }[]
   searchBy: keyof T
   name: string
   queryKey: string
   open: boolean
+  isCheckboxSelection?: boolean
+  isSaveButton?: boolean
   handleClose: () => void
   handleOpen: () => void
+  handleUserSelection?: (params: GridSelectionModelChangeParams) => void
+  onSaveButton?: () => void
   searchPlaceholder?: string
 }
 
 const FindModal = <T extends unknown>({
-  onRowSelection,
-  query,
   columns,
-  searchBy,
-  name,
-  queryKey,
-  open,
-  handleClose,
-  handleOpen,
   searchPlaceholder,
+  searchBy,
+  queryKey,
+  query,
+  open,
+  onRowSelection,
+  name,
+  handleOpen,
+  handleClose,
+  isCheckboxSelection,
+  handleUserSelection,
+  isSaveButton,
+  onSaveButton,
 }: FindModalProps<T>) => {
-  const {data, error, isLoading}= query;
   const [search, setSearch] = useState('')
+  const { data, error, isLoading } = query
 
   useEffect(() => {
     handleOpen()
@@ -51,14 +60,13 @@ const FindModal = <T extends unknown>({
     setSearch(name)
   }
 
-  function handleRowClick(params: any) {
+  function handleRowClick(params: any, e: any) {
     onRowSelection(params.row)
     handleClose()
   }
 
   return (
     <>
-      <CssBaseline />
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
@@ -83,6 +91,13 @@ const FindModal = <T extends unknown>({
                   onSubmit={onSearch}
                   placeholder={searchPlaceholder ?? ''}
                 />
+                {isSaveButton && (
+                  <AddButton
+                    aria-label="Save adding user"
+                    text="Save"
+                    onClick={onSaveButton}
+                  />
+                )}
               </div>
               <div className={styles.container__body__table}>
                 <ReusableTable
@@ -91,7 +106,12 @@ const FindModal = <T extends unknown>({
                   isLoading={isLoading}
                   error={error}
                   columns={columns}
-                  onRowClick={handleRowClick}
+                  {...(isCheckboxSelection
+                    ? {
+                        checkboxSelection: true,
+                        onSelectionModelChange: handleUserSelection,
+                      }
+                    : { onRowClick: handleRowClick })}
                 />
               </div>
             </div>

@@ -17,6 +17,11 @@ export const useAddUserToTeam = () =>
     invalidate: queryKey,
   })
 
+export const useAddUsersToTeam = () =>
+  useMutationWithConfirm((vars: [string, string[]]) => api.addUsersToTeam(...vars), {
+    invalidate: queryKey,
+  })
+
 export const useDeleteUserFromTeam = () =>
   useMutationWithConfirm((vars: [string, string]) => api.deleteUserFromTeam(...vars), {
     invalidate: queryKey,
