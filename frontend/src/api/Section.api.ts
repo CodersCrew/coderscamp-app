@@ -2,7 +2,6 @@ import api from './api.service'
 import { CourseForSection, CourseDataForSection } from '../models/Course.model'
 import {
   ManageSection,
-  ManageSectionData,
   NewSectionData,
   Section,
   SectionData,
