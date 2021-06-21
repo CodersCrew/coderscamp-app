@@ -31,7 +31,7 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
   const [selectedAddUsers, setSelectedAddUsers] = useState<string[]>([])
 
   let { teamId } = useParams<{ teamId: string }>()
-  const { data: team, isLoading, isFetching, error } = useTeam(teamId)
+  const { data: team, isLoading, error } = useTeam(teamId)
   const participantsNotInTeamQuery = useParticipantsNotInTeam({
     enabled: openUsersModal,
   })
@@ -185,7 +185,6 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
           columns={columns}
           data={team?.users}
           isLoading={isLoading}
-          isFetching={isFetching}
           error={error}
           checkboxSelection={true}
           onSelectionModelChange={handleUserSelection}
@@ -198,7 +197,6 @@ const ManageTeam: React.FC<ManageTeamProps> = () => {
           columns={projectColumns}
           data={team?.projects}
           isLoading={isLoading}
-          isFetching={isFetching}
           error={error}
         />
       </Paper>

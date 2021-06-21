@@ -21,7 +21,6 @@ export type ReusableTableProps = {
   isLoading: boolean
   error: unknown
   data?: any[]
-  isFetching: boolean
 } & Omit<DataGridProps, 'rows'>
 
 const ReusableTableFC: React.FC<ReusableTableProps> = ({
@@ -30,7 +29,6 @@ const ReusableTableFC: React.FC<ReusableTableProps> = ({
   isLoading,
   error,
   data,
-  isFetching,
   ...restOfProps
 }) => {
   const [tableName] = useState(name)

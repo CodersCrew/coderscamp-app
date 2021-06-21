@@ -14,7 +14,6 @@ interface FindModalProps<T> {
   onRowSelection?: any
   query: UseQueryResult<T[]>
   columns: { field: string; width: number; fieldName?: string }[]
-  searchPlaceholder?: string
   searchBy: keyof T
   name: string
   queryKey: string
@@ -25,6 +24,7 @@ interface FindModalProps<T> {
   handleOpen: () => void
   handleUserSelection?: (params: GridSelectionModelChangeParams) => void
   onSaveButton?: () => void
+  searchPlaceholder?: string
 }
 
 const FindModal = <T extends unknown>({
@@ -44,6 +44,7 @@ const FindModal = <T extends unknown>({
   onSaveButton,
 }: FindModalProps<T>) => {
   const [search, setSearch] = useState('')
+  const { data, error, isLoading } = query
 
   useEffect(() => {
     handleOpen()
@@ -101,10 +102,9 @@ const FindModal = <T extends unknown>({
               <div className={styles.container__body__table}>
                 <ReusableTable
                   name={name}
-                  data={query.data}
-                  isLoading={query.isLoading}
-                  isFetching={query.isFetching}
-                  error={query.error}
+                  data={data}
+                  isLoading={isLoading}
+                  error={error}
                   columns={columns}
                   {...(isCheckboxSelection
                     ? {

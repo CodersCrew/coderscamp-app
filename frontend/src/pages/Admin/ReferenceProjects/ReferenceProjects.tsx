@@ -16,7 +16,7 @@ export interface ReferenceProjectsProps {}
 
 const ReferenceProjects: React.FC<ReferenceProjectsProps> = () => {
   const history = useHistory()
-  const { data: refProjects, isLoading, error, isFetching } = useProjects()
+  const { data: refProjects, isLoading, error} = useProjects()
   const { showError } = useSnackbar()
 
   const columns = [
@@ -59,7 +59,6 @@ const ReferenceProjects: React.FC<ReferenceProjectsProps> = () => {
           isLoading={isLoading}
           error={error}
           data={refProjects}
-          isFetching={isFetching}
         />
       </Box>
     </PageContainer>

@@ -29,7 +29,7 @@ import { PageContainer } from '../../../components/PageContainer'
 export interface ManageUsersProps {}
 
 const ManageUsers: React.FC<ManageUsersProps> = () => {
-  const { isLoading, error, data, isFetching } = useUsers()
+  const { isLoading, error, data} = useUsers()
   const history = useHistory()
   const tableName = 'Users'
 
@@ -112,7 +112,6 @@ const ManageUsers: React.FC<ManageUsersProps> = () => {
           isLoading={isLoading}
           error={error}
           data={data}
-          isFetching={isFetching}
         />
       </Paper>
     </PageContainer>
