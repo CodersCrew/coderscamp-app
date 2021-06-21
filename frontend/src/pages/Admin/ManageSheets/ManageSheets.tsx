@@ -26,7 +26,7 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
   const selectedSheets = useRef([] as string[])
 
   const tableName = 'Sheets'
-  const { data: sheets, error, isLoading, isFetching } = useSheets()
+  const { data: sheets, error, isLoading} = useSheets()
   const { mutate: createSheet } = useCreateSheet({ invalidate: 'sheets' })
   const { mutate: deleteSheet } = useDeleteSheet({ invalidate: 'sheets' })
 
@@ -119,7 +119,6 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
           isLoading={isLoading}
           error={error}
           data={sheets}
-          isFetching={isFetching}
           onRowClick={handleRowClick}
           onSelectionModelChange={handleSheetSelection}
           checkboxSelection
