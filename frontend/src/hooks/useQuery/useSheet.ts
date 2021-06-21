@@ -6,7 +6,9 @@ import { useQuery } from 'react-query'
 const queryKey = 'sheet'
 
 const useSheet = (id: string) =>
-  useQuery([queryKey, id], () => api.getSheet(id))
+  useQuery([queryKey, id], () => api.getSheet(id), {
+    enabled: !!id,
+  })
 export default useSheet
 
 interface Options {
@@ -53,7 +55,13 @@ export const useDeleteUserFromSheet = (
 
 export const usePatchMentorGrade = (sheetId: string, { invalidate }: Options) =>
   useMutationWithConfirm(
-    (grades: Grades) => api.patchMentorGrade(sheetId, grades),
+    ({
+      grades,
+      gradesToDelete = [],
+    }: {
+      grades: Grades
+      gradesToDelete?: string[]
+    }) => api.patchMentorGrade(sheetId, grades, gradesToDelete),
     {
       invalidate: invalidate ?? queryKey,
     },
@@ -64,8 +72,16 @@ export const usePatchMentorReviewerGrade = (
   { invalidate }: Options,
 ) =>
   useMutationWithConfirm(
-    ([mentorId, grades]: [string, Grades]) =>
-      api.patchMentorReviewerGrade(sheetId, mentorId, grades),
+    ({
+      mentorId,
+      grades,
+      gradesToDelete = [],
+    }: {
+      mentorId: string
+      grades: Grades
+      gradesToDelete?: string[]
+    }) =>
+      api.patchMentorReviewerGrade(sheetId, mentorId, grades, gradesToDelete),
     {
       invalidate: invalidate ?? queryKey,
     },

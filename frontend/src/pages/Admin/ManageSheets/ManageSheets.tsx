@@ -4,7 +4,12 @@ import AddButton from '../../../components/AddButton'
 import SelectSortBy from '../../../components/SelectSortBy'
 import SearchInput from '../../../components/SearchInput'
 import ReusableTable from '../../../components/ReusableTable'
-import { Paper } from '@material-ui/core'
+import {
+  Container,
+  CssBaseline,
+  LinearProgress,
+  Paper,
+} from '@material-ui/core'
 import { GridSelectionModelChangeParams } from '@material-ui/data-grid'
 import { useHistory } from 'react-router-dom'
 import DeleteButton from '../../../components/DeleteButton'
@@ -15,9 +20,9 @@ import {
   useSheets,
   useCreateSheet,
   useDeleteSheet,
+  useUserMe,
 } from '../../../hooks'
-import { GradeSheet } from '../../../models'
-import { PageContainer } from '../../../components/PageContainer'
+import { GradeSheetDto, UserType } from '../../../models'
 
 export interface ManageSheetsProps {}
 
@@ -26,16 +31,17 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
   const selectedSheets = useRef([] as string[])
 
   const tableName = 'Sheets'
-  const { data: sheets, error, isLoading} = useSheets()
+  const { data: userMeData } = useUserMe()
+  const { data: sheets, error, isLoading } = useSheets(userMeData)
   const { mutate: createSheet } = useCreateSheet({ invalidate: 'sheets' })
   const { mutate: deleteSheet } = useDeleteSheet({ invalidate: 'sheets' })
 
   const changeSortBy = (value: string) => {
-    sortSheets(value as keyof GradeSheet)
+    sortSheets(value as keyof GradeSheetDto)
   }
 
   const changeSearch = (value: string) => {
-    const column = /^[0-9a-fA-F]{1,16}$/.test(value) ? 'id' : 'mentorSurname'
+    const column = 'mentorSurname'
     const search = value
     searchSheet(column, search)
   }
@@ -82,8 +88,11 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
     history.push(`/gradesheets/${data.id}`)
   }
 
+  if (!userMeData || isLoading) return <LinearProgress />
+
   return (
-    <PageContainer label="Manage Sheets">
+    <Container className={styles.manageSheets} aria-label="Manage Sheets">
+      <CssBaseline />
       <PageHeader name="Sheets">
         <SearchInput
           onSubmit={changeSearch}
@@ -93,17 +102,19 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
       <Paper className={styles.container}>
         <div className={styles.manageContainer}>
           <h2 className={styles.manageHeader}>Manage Sheets</h2>
-          <div className={styles.buttons}>
-            <AddButton
-              text="Add"
-              onClick={() => createSheet(null)}
-              aria-label="Add sheet"
-            />
-            <DeleteButton
-              confirmTitle="Are you sure you want to delete selected grade sheets?"
-              onConfirm={deleteSelectedSheets}
-            />
-          </div>
+          {userMeData.type === UserType.Admin && (
+            <div className={styles.buttons}>
+              <AddButton
+                text="Add"
+                onClick={() => createSheet(null)}
+                aria-label="Add sheet"
+              />
+              <DeleteButton
+                confirmTitle="Are you sure you want to delete selected grade sheets?"
+                onConfirm={deleteSelectedSheets}
+              />
+            </div>
+          )}
           <span className={styles.selectSortBy}>
             <SelectSortBy
               onChange={changeSortBy}
@@ -118,13 +129,13 @@ const ManageSheets: React.FC<ManageSheetsProps> = () => {
           columns={columns}
           isLoading={isLoading}
           error={error}
-          data={sheets}
+          data={sheets ?? []}
           onRowClick={handleRowClick}
           onSelectionModelChange={handleSheetSelection}
           checkboxSelection
         />
       </Paper>
-    </PageContainer>
+    </Container>
   )
 }
 

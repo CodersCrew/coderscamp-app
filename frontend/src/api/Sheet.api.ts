@@ -1,111 +1,75 @@
 import api from './api.service'
 import {
-  GradeSheet,
-  GradeSheetData,
-  TeamProjectData,
-  UserData,
   Grades,
-  Participant,
   Reviewer,
+  GradeSheetDto,
+  GradeSheetDetailsDto,
+  GradeSheetDetails,
+  GradeSheetData,
+  UserType,
 } from '../models'
 import _ from 'lodash'
+import { getUserFromLocalStorage } from '../app/utils'
 
-export const getSheets = async () => {
-  const response = await api.get('/grade/sheets')
-  const sheetsData = response.data as GradeSheetData[]
-  const sheets: GradeSheet[] = []
-  for (let i in sheetsData) {
-    const sheet = await getSheetInfo(sheetsData[i])
-    sheets.push(sheet)
+function convertGradeSheetDetailsDto(sheet: GradeSheetDetailsDto) {
+  const reviewers: Reviewer[] = sheet.mentorReviewerGrades.map((rev, idx) => ({
+    id: rev.mentorID,
+    name: sheet.reviewers[idx].name,
+    email: sheet.reviewers[idx].email,
+    grades: rev.grades,
+  }))
+  return {
+    ..._.omit(sheet, ['mentorReviewerGrades', 'reviewers']),
+    reviewers,
   }
+}
 
+export const getSheets = async (userType: UserType) => {
+  const userDataLS = getUserFromLocalStorage()
+  const userId = userDataLS.userId ?? ''
+  const url =
+    userType === UserType.Mentor
+      ? `/mentors/me/${userId}/grade/sheets`
+      : userType === UserType.Participant
+      ? `/participants/me/${userId ?? ''}/grade/sheets`
+      : '/grade/sheets'
+  const response = await api.get(url)
+  const sheets = response.data as GradeSheetDto[]
   return sheets
 }
 
-export const getSheetInfo = async (
-  sheet: GradeSheetData,
-): Promise<GradeSheet> => {
-  let mentorName: string, mentorSurname: string
-  try {
-    const mentorRes = await api.get('/users/' + sheet.mentorID)
-    const mentor = mentorRes.data as UserData
-    ;[mentorName, mentorSurname] = [mentor.name, mentor.surname]
-  } catch (err) {
-    ;[mentorName, mentorSurname] = ['---', '---']
-  }
-
-  let projectName: string, projectUrl: string, projectDescription: string
-  try {
-    const projectRes = await api.get('/teams/projects/' + sheet.projectID)
-    const project: TeamProjectData = projectRes.data
-    projectName = project.projectName
-    projectUrl = project.projectUrl
-    projectDescription = project.description
-  } catch (err) {
-    projectName = '---'
-    ;[projectName, projectUrl, projectDescription] = ['---', '---', '---']
-  }
-
-  const participants = sheet.participants ?? []
-  for (let i in participants) {
-    const user = participants[i]
-    try {
-      const userRes = await api.get('/users/' + user.participantID)
-      const userData = userRes.data as UserData
-      participants[i].name = userData.name
-      participants[i].surname = userData.surname
-    } catch (err) {
-      participants[i].name = '---'
-      participants[i].surname = '---'
-    }
-  }
-
-  const reviewers = sheet.reviewers ?? []
-  const reviewersInfo = await Promise.all(
-    reviewers.map(async (userId) => {
-      const reviewer: Reviewer = {
-        _id: userId,
-        name: '---',
-        surname: '---',
-        email: '---',
-      }
-      try {
-        const userRes = await api.get('/users/' + userId)
-        const userData = userRes.data as UserData
-        reviewer._id = userId
-        reviewer.name = userData.name
-        reviewer.surname = userData.surname
-        reviewer.email = userData.surname
-      } catch (err) {}
-      return reviewer
-    }),
-  )
-
-  return {
-    ..._.omit(sheet, '_id'),
-    id: sheet._id,
-    projectID: sheet.projectID ?? '',
-    mentorID: sheet.mentorID ?? '',
-    participants,
-    mentorGrades: sheet.mentorGrades ?? {},
-    mentorName,
-    mentorSurname,
-    projectName,
-    projectUrl,
-    projectDescription,
-    reviewers: reviewersInfo,
-  }
+export const getSheet = async (
+  id: string,
+  userType?: UserType,
+): Promise<GradeSheetDetails> => {
+  const userDataLS = getUserFromLocalStorage()
+  const userId = userDataLS.userId ?? ''
+  const url =
+    userType === UserType.Mentor
+      ? `/mentors/me/${userId}/grade/sheets/${id}`
+      : userType === UserType.Participant
+      ? `/participants/me/${userId}/grade/sheets/${id}`
+      : '/grade/sheets/' + id
+  const response = await api.get<GradeSheetDetailsDto>(url)
+  const sheet = response.data
+  return convertGradeSheetDetailsDto(sheet)
 }
 
-export const getSheet = async (id: string) => {
-  const response = await api.get('/grade/sheets/' + id)
-  return getSheetInfo(response.data)
+export const getMentorSheet = async (
+  id: string,
+  mentorId: string,
+): Promise<GradeSheetDetails> => {
+  const response = await api.get<GradeSheetDetailsDto>(
+    `/mentors/me/${mentorId}/grade/sheets/${id}`,
+  )
+  const sheet = response.data
+  return convertGradeSheetDetailsDto(sheet)
 }
 
 export const createSheet = async () => {
   await api.post('/grade/sheets', {
-    mentorID: '507f1f77bcf86cd799439011',
-    projectID: '507f1f77bcf86cd799439011',
+    mentorId: '507f1f77bcf86cd799439011',
+    projectId: '507f1f77bcf86cd799439011',
   })
 }
 
@@ -116,28 +80,8 @@ export const deleteSheet = async (id: string) => {
 export const getMentorSheets = async (
   mentorId?: string,
 ): Promise<GradeSheetData[] | null> => {
-  let gradeSheetsRes
-  try {
-    gradeSheetsRes = await api.get(`/mentors/${mentorId}/grade/sheets`)
-  } catch (err) {
-    return null
-  }
+  const gradeSheetsRes = await api.get(`/mentors/${mentorId}/grade/sheets`)
   return gradeSheetsRes.data as GradeSheetData[]
-}
-
-export const getParticipants = async (
-  id: string,
-): Promise<(Participant & { id: string })[]> => {
-  const sheet = await getSheet(id)
-  return sheet.participants.map((p) => ({
-    ...p,
-    id: p.participantID,
-  }))
-}
-
-export const getMentorGrades = async (id: string): Promise<Grades> => {
-  const sheet = await getSheet(id)
-  return sheet.mentorGrades
 }
 
 export const setMentor = async (id: string, mentorId: string) => {
@@ -176,9 +120,11 @@ export const patchMentorReviewerGrade = async (
   id: string,
   mentorId: string,
   grades: Grades,
+  gradesToDelete: string[] = [],
 ) => {
   await api.patch(`/grade/sheets/${id}/reviewers/${mentorId}/grades`, {
     grades,
+    gradesToDelete,
   })
 }
 
@@ -186,6 +132,13 @@ export const setMentorGrade = async (id: string, grades: Grades) => {
   await api.put(`/grade/sheets/${id}/mentor/grades`, { grades })
 }
 
-export const patchMentorGrade = async (id: string, grades: Grades) => {
-  await api.patch(`/grade/sheets/${id}/mentor/grades`, { grades })
+export const patchMentorGrade = async (
+  id: string,
+  grades: Grades,
+  gradesToDelete: string[] = [],
+) => {
+  await api.patch(`/grade/sheets/${id}/mentor/grades`, {
+    grades,
+    gradesToDelete,
+  })
 }
