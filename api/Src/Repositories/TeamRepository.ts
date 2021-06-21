@@ -2,12 +2,16 @@ import { Repository } from './Repository'
 import * as mongoose from 'mongoose'
 import { Team } from '../Models/Team'
 
-export default class TeamRepository extends Repository {
+export default class TeamRepository extends Repository<
+  Team & mongoose.Document
+> {
   async getAll() {
     return this.model.find({}).populate('users').populate('mentor')
   }
 
-  async getById(id: mongoose.Types.ObjectId): Promise<Team> {
+  async getById(
+    id: mongoose.Types.ObjectId,
+  ): Promise<Team & mongoose.Document> {
     return this.model.findOne(id).populate('users').populate('mentor')
   }
 
@@ -43,10 +47,9 @@ export default class TeamRepository extends Repository {
     teamId: mongoose.Types.ObjectId,
     usersIds: Array<mongoose.Types.ObjectId>,
   ) {
-
     const updateQuery = {
       $push: {
-        users: { $each: usersIds }
+        users: { $each: usersIds },
       },
     }
     return await this.updateById(teamId, updateQuery)

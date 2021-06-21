@@ -25,6 +25,8 @@ export interface UserModel {
   password: string
   status: UserStatus
   grades: Grade[]
+  token: string
+  createdAt: number
 }
 
 const UserSchema = new mongoose.Schema(

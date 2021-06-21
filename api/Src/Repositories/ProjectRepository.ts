@@ -1,11 +1,14 @@
 import { Repository } from './Repository'
 import * as mongoose from 'mongoose'
+import { Project } from '../Models/Project'
 
-export default class ProjectRepository extends Repository {
+export default class ProjectRepository extends Repository<
+  Project & mongoose.Document
+> {
   async getAll() {
     return this.model.find({}).populate('sectionId')
   }
-  async getAllByCourse(courseId: string) {
+  async getAllByCourse(courseId: mongoose.Types.ObjectId) {
     var id = new mongoose.mongo.ObjectID(courseId)
 
     return this.model.aggregate([
@@ -42,7 +45,7 @@ export default class ProjectRepository extends Repository {
     return this.model.deleteOne({ _id: id })
   }
 
-  async create(obj: object) {
+  async create(obj) {
     return this.model.create(obj)
   }
 

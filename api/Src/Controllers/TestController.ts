@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import * as mongoose from 'mongoose'
 import TestService from '../Services/TestService'
-import { Test } from '../Models/Section'
 import SectionService from '../Services/SectionService'
 
 export default class TestController {

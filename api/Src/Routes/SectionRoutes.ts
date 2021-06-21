@@ -25,6 +25,9 @@ const sectionRoutes = (
     router
       .route('/courses/:id/sections')
       .get(sectionController.getSectionsByCourseId)
+    router
+      .route('/sections/:id/course')
+      .get(HasRole([UserType.Admin]), sectionController.getSectionWithCourse)
 
     router
       .route('/sections/:id/test')

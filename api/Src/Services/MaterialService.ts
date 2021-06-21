@@ -4,7 +4,6 @@ import * as mongoose from 'mongoose'
 import MaterialRepository from '../Repositories/MaterialRepository'
 import MaterialSchema from '../Models/Material'
 import SectionService from './SectionService'
-import { TSection } from '../Models/Section'
 
 export default class MaterialService {
   constructor(
@@ -17,7 +16,7 @@ export default class MaterialService {
     const material = new MaterialSchema(req.body)
     await material.validate()
 
-    let section: TSection = await this.sectionService.getSectionById(id)
+    let section = await this.sectionService.getSectionById(id)
     if (!section) throw Error('Section not found')
     section.materials.push(material._id)
     await this.sectionService.updateSection(id, section)
@@ -48,7 +47,7 @@ export default class MaterialService {
     const idMaterial = new mongoose.Types.ObjectId(req.params.id)
     const idSection = new mongoose.Types.ObjectId(req.params.sectionID)
 
-    let section: TSection = await this.sectionService.getSectionById(idSection)
+    let section = await this.sectionService.getSectionById(idSection)
     if (!section) throw Error('Section not found')
     section.materials.forEach((material, index) => {
       if (material.equals(idMaterial)) {

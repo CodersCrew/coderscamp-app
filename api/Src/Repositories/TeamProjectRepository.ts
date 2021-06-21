@@ -1,7 +1,10 @@
 import { Repository } from './Repository'
 import * as mongoose from 'mongoose'
+import { TeamProject } from '../Models/TeamProject'
 
-export default class TeamProjectRepository extends Repository {
+export default class TeamProjectRepository extends Repository<
+  TeamProject & mongoose.Document
+> {
   async getAllByCourse(courseId) {
     var id = new mongoose.mongo.ObjectID(courseId)
     return this.model.aggregate([

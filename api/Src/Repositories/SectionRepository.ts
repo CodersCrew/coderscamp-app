@@ -1,7 +1,10 @@
 import { Repository } from './Repository'
 import * as mongoose from 'mongoose'
+import { Section } from '../Models/Section'
 
-export default class SectionRepository extends Repository {
+export default class SectionRepository extends Repository<
+  Section & mongoose.Document
+> {
   async getAll() {
     return this.model.find({})
   }

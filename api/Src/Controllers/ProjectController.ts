@@ -18,7 +18,9 @@ export default class ProjectController {
 
   getProject = async (req: express.Request, res: express.Response) => {
     const id = new mongoose.Types.ObjectId(req.params.id)
+    //console.log(id)
     const project = await this.service.findProjectById(id)
+    console.log(project)
     if (!project) res.status(404).json({ message: 'Project not found' })
     res.status(200).json(project)
   }
@@ -28,7 +30,7 @@ export default class ProjectController {
     const validatedProjectData = this.service.validateProjectData(
       projectData,
       true,
-    ) as null | Omit<Project, '_id'>
+    ) as null | mongoose.Document
     if (validatedProjectData === null)
       res
         .status(400)
