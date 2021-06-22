@@ -1,3 +1,10 @@
+.manageSheets {
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  font-family: Arial, Helvetica, sans-serif;
+}
 .container {
   border: gray 1px solid;
 }
@@ -39,4 +46,7 @@
   grid-area: mainHeader;
   align-self: center;
   padding: 1rem;
+}
+.table {
+  padding: 3rem;
 }
