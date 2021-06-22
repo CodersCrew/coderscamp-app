@@ -7,7 +7,7 @@ import { PasswordResetTokenModel } from '../Src/Models/PasswordResetToken'
 import UserDbModel from '../Src/Models/User'
 import TokenDbModel from '../Src/Models/PasswordResetToken'
 import { Document, Types } from 'mongoose'
-import { notDeepEqual } from 'assert'
+import * as mongoose from 'mongoose'
 
 class TestUserRepository extends UserRepository {
   users: Array<UserModel & Document>
@@ -31,19 +31,25 @@ class TestUserRepository extends UserRepository {
   async create(user: UserModel) {
     const newUser = new this.model(user) as UserModel & Document
     this.users.push(newUser)
+    return newUser
   }
 
   async updateById(id: Types.ObjectId, props: object) {
     const index = this.users.findIndex((user) => user._id === id)
     Object.assign(this.users[index], props)
+    return this.users[index]
   }
 
   async deleteById(id: Types.ObjectId) {
+    const user = this.users.find((sheet) => sheet._id === `${id}`)
     this.users = this.users.filter((user) => user._id !== id)
+    return user
   }
 }
 
-class TestTokenRepository extends Repository {
+class TestTokenRepository extends Repository<
+  PasswordResetTokenModel & mongoose.Document
+> {
   tokens: Array<PasswordResetTokenModel & Document>
   constructor() {
     super(TokenDbModel)
@@ -57,6 +63,7 @@ class TestTokenRepository extends Repository {
   async create(token: PasswordResetTokenModel) {
     const newToken = new this.model(token) as PasswordResetTokenModel & Document
     this.tokens.push(newToken)
+    return newToken
   }
 }
 
@@ -79,6 +86,8 @@ describe('Test Password Service', () => {
       type: 0,
       status: 0,
       grades: [],
+      token: '',
+      createdAt: 10,
     } as UserModel)
 
     users = await userService.getUsers()

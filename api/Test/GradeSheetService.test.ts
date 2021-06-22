@@ -31,17 +31,21 @@ class TestRepository extends GradeSheetRepository {
   async create(gradeSheet: GradeSheet) {
     const newGradeSheet = new this.model(gradeSheet) as GradeSheet & Document
     this.gradeSheets.push(newGradeSheet)
+    return newGradeSheet
   }
 
   async updateById(id: Types.ObjectId, props: object) {
     const index = await this.getIndexById(id)
     Object.assign(this.gradeSheets[index], props)
+    return this.gradeSheets[index]
   }
 
   async deleteById(id: Types.ObjectId) {
+    const gradeSheet = this.gradeSheets.find((sheet) => sheet._id === `${id}`)
     this.gradeSheets = this.gradeSheets.filter(
       (sheet) => `${sheet._id}` !== `${id}`,
     )
+    return gradeSheet
   }
 
   async addMentorReviewer(
@@ -70,7 +74,7 @@ class TestRepository extends GradeSheetRepository {
     )
   }
 
-  async save(doc: Document) {
+  async save(doc: GradeSheet & Document) {
     return doc
   }
 }

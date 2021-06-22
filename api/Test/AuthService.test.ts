@@ -30,9 +30,10 @@ class TestRepository extends UserRepository {
     return this.users.find((user) => user.email === email)
   }
 
-  async create(user: UserModel) {
+  async create(user: UserType) {
     const newUser = (await new this.model(user)) as UserType
     this.users.push(newUser)
+    return newUser
   }
 }
 

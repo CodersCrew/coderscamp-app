@@ -27,18 +27,22 @@ class TestRepository extends UserRepository {
     return this.users.find((user) => user.email === email)
   }
 
-  async create(user: UserModel) {
+  async create(user: UserModel & Document) {
     const newUser = new this.model(user) as UserModel & Document
     this.users.push(newUser)
+    return newUser
   }
 
   async updateById(id: Types.ObjectId, props: object) {
     const index = this.users.findIndex((user) => user._id === id)
     Object.assign(this.users[index], props)
+    return this.users[index]
   }
 
   async deleteById(id: Types.ObjectId) {
+    const user = this.users.find((user) => user._id === `${id}`)
     this.users = this.users.filter((user) => user._id !== id)
+    return user
   }
 }
 
@@ -61,6 +65,8 @@ describe('Test UserService ', () => {
         type: 0,
         status: 0,
         grades: [],
+        token: 'token',
+        createdAt: 10,
       } as UserModel)
     }
     users = await service.getUsers()

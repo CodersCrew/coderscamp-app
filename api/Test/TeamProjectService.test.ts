@@ -4,9 +4,11 @@ import TeamProjectSchema from '../Src/Models/TeamProject'
 import TeamProjectRepository from '../Src/Repositories/TeamProjectRepository'
 import TeamProjectService from '../Src/Services/TeamProjectService'
 import { TestTeamsRepository } from './TeamService.test'
+import { Team } from '../Src/Models/Team'
 
+type SectionDBModel = TeamProject & mongoose.Document
 class TestTeamProjectRepository extends TeamProjectRepository {
-  private projects: TeamProject[] = []
+  private projects: SectionDBModel[] = []
 
   constructor() {
     super(TeamProjectSchema)
@@ -88,15 +90,18 @@ class TestTeamProjectRepository extends TeamProjectRepository {
 
   async create(project: TeamProject & mongoose.Document<TeamProject>) {
     this.projects.push(project)
+    return project
   }
 
   async deleteById(id: mongoose.Types.ObjectId) {
     const projectIndex = this.projects.findIndex(
       (project) => project._id === id,
     )
+    let project
     if (projectIndex > -1) {
-      this.projects.splice(projectIndex, 1)
+      project = this.projects.splice(projectIndex, 1)
     }
+    return project
   }
 
   async deleteByIdForTeam(
@@ -141,7 +146,7 @@ describe('TeamProjectService', () => {
       mentor: mentorId,
       users: [mongoose.Types.ObjectId()],
       course: mongoose.Types.ObjectId(),
-    }
+    } as Team & mongoose.Document
     const teamProjectRepository = new TestTeamProjectRepository()
     const teamRepository = new TestTeamsRepository()
     teamRepository.create(team1)

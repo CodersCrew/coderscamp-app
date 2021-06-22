@@ -4,7 +4,7 @@ import SectionService from '../Src/Services/SectionService'
 import SectionSchema from '../Src/Models/Section'
 import { Section } from '../Src/Models/Section'
 
-type SectionDBModel = Section & { _id: mongoose.Types.ObjectId }
+type SectionDBModel = Section & mongoose.Document
 
 class TestSectionRepository extends SectionRepository {
   private sections: Array<SectionDBModel> = []
@@ -20,20 +20,22 @@ class TestSectionRepository extends SectionRepository {
 
   async create(section: SectionDBModel) {
     this.sections = [...this.sections, section]
+    return section
   }
 
   async deleteById(id: mongoose.Types.ObjectId) {
+    const section = this.sections.find((section) => section._id === `${id}`)
     this.sections = this.sections.filter((section) => section._id !== id)
+    return section
   }
 
   async updateById(id: mongoose.Types.ObjectId, section: SectionDBModel) {
     const sectionIndex = this.sections.findIndex(
       (section) => section._id === id,
     )
-    const sectionAfterUpdate = { ...this.sections[sectionIndex], ...section }
-    this.sections[sectionIndex] = sectionAfterUpdate
+    Object.assign(this.sections[sectionIndex], section)
 
-    return sectionAfterUpdate
+    return this.sections[sectionIndex]
   }
 
   async updateByQuery(query: object, obj: object) {
@@ -132,6 +134,6 @@ describe('Section Service', () => {
     section.name = 'updated name'
     const updatedSection = await service.updateSection(section._id, section)
 
-    expect(updatedSection._doc.name).toEqual(section.name)
+    expect(updatedSection.name).toEqual(section.name)
   })
 })

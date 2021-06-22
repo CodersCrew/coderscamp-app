@@ -1,14 +1,14 @@
 import * as mongoose from 'mongoose'
-import { Section, Test, TestType } from '../Src/Models/Section'
+import { Section, TestType } from '../Src/Models/Section'
 import SectionRepository from '../Src/Repositories/SectionRepository'
 import SectionService from '../Src/Services/SectionService'
 import SectionSchema from '../Src/Models/Section'
 import TestService from '../Src/Services/TestService'
 
-type SectionDBModel = Section & { _id: mongoose.Types.ObjectId }
+type SectionDBModel = Section & mongoose.Document
 
 class TestSectionTestsRepository extends SectionRepository {
-  private section: Array<Section> = []
+  private section: Array<SectionDBModel> = []
   model: any
 
   async getAll() {
@@ -21,10 +21,13 @@ class TestSectionTestsRepository extends SectionRepository {
 
   async create(section: SectionDBModel) {
     this.section = [...this.section, section]
+    return section
   }
 
   async deleteById(id: mongoose.Types.ObjectId) {
+    const section = this.section.find((section) => section._id === `${id}`)
     this.section = this.section.filter((section) => section._id !== id)
+    return section
   }
 
   async updateById(id: mongoose.Types.ObjectId, testQuery: object) {
@@ -54,7 +57,7 @@ class TestSectionTestsRepository extends SectionRepository {
         tests: section.tests.map((test) => {
           return test._id === testId ? { ...test, ...changes } : test
         }),
-      }
+      } as SectionDBModel
     })
   }
 

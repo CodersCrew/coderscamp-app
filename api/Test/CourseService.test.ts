@@ -19,15 +19,18 @@ class TestCourseRepository extends CourseRepository {
     return this.courses.find((course) => course._id === id)
   }
 
-  async create(course: Course & mongoose.Document<Course>) {
+  async create(course: Course & mongoose.Document) {
     this.courses.push(course)
+    return course
   }
 
   async deleteById(id: mongoose.Types.ObjectId) {
     const courseIndex = this.courses.findIndex((course) => course._id === id)
+    let course
     if (courseIndex > -1) {
-      this.courses.splice(courseIndex, 1)
+      course = this.courses.splice(courseIndex, 1)
     }
+    return course
   }
 
   async updateById(
