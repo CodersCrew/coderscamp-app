@@ -4,7 +4,7 @@ import TeamService from '../Src/Services/TeamService'
 import TeamModel, { Team } from '../Src/Models/Team'
 
 export class TestTeamsRepository extends TeamRepository {
-  private teams: Array<Team> = []
+  private teams: Array<Team & mongoose.Document> = []
 
   constructor() {
     super(TeamModel)
@@ -28,22 +28,26 @@ export class TestTeamsRepository extends TeamRepository {
     return team
   }
 
-  async create(team: Team) {
+  async create(team: Team & mongoose.Document) {
     this.teams = [...this.teams, team]
+    return team
   }
 
   async updateById(id: mongoose.Types.ObjectId, teamData: Partial<Team>) {
     const teamIndex = this.teams.findIndex((team) => team._id === id)
     if (teamIndex === -1) return null
 
-    const teamAfterUpdate = { ...this.teams[teamIndex], ...teamData }
+    const teamAfterUpdate = { ...this.teams[teamIndex], ...teamData } as Team &
+      mongoose.Document
     this.teams[teamIndex] = teamAfterUpdate
 
     return teamAfterUpdate
   }
 
   async deleteById(id: mongoose.Types.ObjectId) {
-    return (this.teams = this.teams.filter((team) => team._id !== id))
+    const team = this.teams.find((team) => team._id === `${id}`)
+    this.teams = this.teams.filter((team) => team._id !== id)
+    return team
   }
 
   async addUserToTeam(

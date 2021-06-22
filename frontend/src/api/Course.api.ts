@@ -1,9 +1,6 @@
 import api from './api.service'
 
-import {
-  Course,
-  CourseCreateObject,
-} from '../models/Course.model'
+import { Course, CourseCreateObject } from '../models/Course.model'
 
 export interface CourseListElementDto {
   _id: string

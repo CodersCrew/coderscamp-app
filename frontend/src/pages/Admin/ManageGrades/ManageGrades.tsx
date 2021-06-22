@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Box, CircularProgress } from '@material-ui/core'
+import { useSelector } from 'react-redux'
 
 import { IGrade } from '../../../models/User.model'
 import UButton from '../../../components/UButton'
-
-import styles from './ManageGrades.module.css'
 import DeleteButton from '../../../components/DeleteButton'
 import useSnackbar from '../../../hooks/useSnackbar'
 import {
@@ -16,6 +15,9 @@ import {
 } from '../../../hooks'
 import { Section } from '../../../models'
 import FindModal from '../../../components/FindModal/FindModal'
+import { RootState } from '../../../app/store'
+
+import styles from './ManageGrades.module.css'
 
 export interface ManageGradesProps {
   userID: string
@@ -27,6 +29,9 @@ export interface ISectionsUtility {
 }
 
 const ManageGrades: React.FC<ManageGradesProps> = (props) => {
+  const courseId = useSelector(
+    (state: RootState) => state.courseList.activeCourse?._id || '',
+  )
   const [isEdit, setIsEdit] = useState<Array<boolean>>([])
 
   const [grades, setGrades] = useState<IGrade[]>([])
@@ -35,7 +40,7 @@ const ManageGrades: React.FC<ManageGradesProps> = (props) => {
   const [isOpenSectionsModal, setIsOpenSectionsModal] = useState(false)
   const { showError, showWarning } = useSnackbar()
   const { data: gradesData, isLoading, error } = useGrades(props.userID)
-  const sectionsQuery = useSections({
+  const sectionsQuery = useSections(courseId, {
     enabled: isOpenSectionsModal,
   })
   const { mutate: createGrade } = useCreateGrade(props.userID)

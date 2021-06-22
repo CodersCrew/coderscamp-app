@@ -2,10 +2,10 @@ import api from './api.service'
 import { CourseForSection, CourseDataForSection } from '../models/Course.model'
 import {
   ManageSection,
-  ManageSectionData,
   NewSectionData,
   Section,
   SectionData,
+  SectionDTO,
 } from '../models/Section.model'
 import {
   ProjectForSection,
@@ -13,34 +13,13 @@ import {
 } from '../models/Project.model'
 import { AxiosResponse } from 'axios'
 
-export const getSections = async (): Promise<ManageSection[]> => {
-  const coursesResponse = await api.get('/courses')
-  const courses = coursesResponse.data as CourseDataForSection[]
-  const sections = (await api.get('/sections')).data as ManageSectionData[]
-  return sections.map((section) => {
-    const course = courses.find((course) => course._id === section.course)
-    return {
-      id: section._id,
-      name: section.name,
-      startDate: section.startDate
-        ? new Date(section.startDate).getTime() / 1000
-        : undefined,
-      endDate: section.endDate
-        ? new Date(section.endDate).getTime() / 1000
-        : undefined,
-      courseName: course ? course.name : '',
-      courseId: course?._id || '',
-    }
-  })
-}
-
 export const getSectionsByCourseId = async (
   id: string,
 ): Promise<ManageSection[]> => {
-  const courseResponse = await api.get(`/courses/${id}`)
-  const course = courseResponse.data as CourseDataForSection
-  const sections = (await api.get(`/courses/${id}/sections`))
-    .data as ManageSectionData[]
+  const { data: sections } = await api.get<SectionDTO[]>(
+    `/courses/${id}/sections`,
+  )
+
   return sections.map((section) => {
     return {
       id: section._id,
@@ -51,8 +30,8 @@ export const getSectionsByCourseId = async (
       endDate: section.endDate
         ? new Date(section.endDate).getTime() / 1000
         : undefined,
-      courseName: course ? course.name : '',
-      courseId: course?._id || '',
+      courseName: section.course.name,
+      courseId: section.course._id,
     }
   })
 }
@@ -95,16 +74,12 @@ export const getSection = async (id: string): Promise<Section | null> => {
   }
 }
 
-export const getOneSection = async (id: string): Promise<ManageSection | null> => {
-  if(!id) return null
-  const section = (await api.get(`/sections/${id}`)).data as ManageSectionData
-  let course = null
-  if (section.course) {
-    try {
-      const coursesResponse = await api.get(`/courses/${section.course}`)
-      course = coursesResponse.data as CourseDataForSection
-    } catch (e) {}
-  }
+export const getOneSection = async (
+  id: string,
+): Promise<ManageSection | null> => {
+  if (!id) return null
+  const { data: section } = await api.get<SectionDTO>(`/sections/${id}`)
+
   return {
     id: section._id,
     name: section.name,
@@ -115,8 +90,8 @@ export const getOneSection = async (id: string): Promise<ManageSection | null> =
       ? new Date(section.endDate).getTime() / 1000
       : undefined,
     description: section.description,
-    courseName: course ? course.name : '',
-    courseId: course?._id || '',
+    courseName: section.course.name,
+    courseId: section.course._id,
   }
 }
 

@@ -4,7 +4,7 @@ import ProjectService from '../Src/Services/ProjectService'
 import ProjectSchema from '../Src/Models/Project'
 import { Project } from '../Src/Models/Project'
 
-type ProjectDBModel = Project & { _id: mongoose.Types.ObjectId }
+type ProjectDBModel = Project & mongoose.Document
 
 class TestProjectRepository extends ProjectRepository {
   private projects: Array<ProjectDBModel> = []
@@ -13,7 +13,7 @@ class TestProjectRepository extends ProjectRepository {
   async getAll() {
     return this.projects
   }
-  async getAllByCourse(courseId: string) {
+  async getAllByCourse(courseId: mongoose.Types.ObjectId) {
     return this.projects
   }
 
@@ -23,6 +23,7 @@ class TestProjectRepository extends ProjectRepository {
 
   async create(project: ProjectDBModel) {
     this.projects = [...this.projects, project]
+    return project
   }
 
   async deleteById(id: mongoose.Types.ObjectId) {
@@ -33,7 +34,10 @@ class TestProjectRepository extends ProjectRepository {
     const projectIndex = this.projects.findIndex(
       (project) => project._id === id,
     )
-    const projectAfterUpdate = { ...this.projects[projectIndex], ...project }
+    const projectAfterUpdate = {
+      ...this.projects[projectIndex],
+      ...project,
+    } as ProjectDBModel
     this.projects[projectIndex] = projectAfterUpdate
 
     return projectAfterUpdate
@@ -56,7 +60,7 @@ describe('Project Service', () => {
       description: 'description',
     }
 
-    await service.createProject(project)
+    await service.createProject(project as Project & mongoose.Document)
     const fetchedProject = await service.findProjectById(project._id)
     expect(fetchedProject).toEqual(project)
   })
@@ -78,8 +82,8 @@ describe('Project Service', () => {
       description: 'description',
     }
 
-    await service.createProject(firstProject)
-    await service.createProject(secondProject)
+    await service.createProject(firstProject as ProjectDBModel)
+    await service.createProject(secondProject as ProjectDBModel)
 
     const allProjects = await service.getProjects(exampleCourseId)
     expect(allProjects).toHaveLength(2)
@@ -93,7 +97,7 @@ describe('Project Service', () => {
       projectUrl: 'projekt url 1',
     }
 
-    await service.createProject(project)
+    await service.createProject(project as ProjectDBModel)
     await service.deleteProjectById(project._id)
 
     const allProjects = await service.getProjects(exampleCourseId)
@@ -108,7 +112,7 @@ describe('Project Service', () => {
       projectUrl: 'projekt url 3',
     }
 
-    await service.createProject(project)
+    await service.createProject(project as ProjectDBModel)
     const updatedProject = await service.updateProjectById(project._id, {
       projectName: 'Nowa nazwa projektu 3',
     })

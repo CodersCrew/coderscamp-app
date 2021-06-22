@@ -87,4 +87,11 @@ export default class SectionController {
       return res.status(500).json({ message: error.message })
     }
   }
+
+  getSectionWithCourse = async (
+    req: express.Request,
+    res: express.Response,
+  ) => {
+    const sectionId = new mongoose.Types.ObjectId(req.params.id)
+  }
 }

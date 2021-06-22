@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose'
-import { Grade, GradeSchema, GradeType } from './Grade'
+import { Grade } from './Grade'
 import * as Joi from 'joi'
 const passwordComplexity = require('joi-password-complexity')
 
@@ -25,6 +25,8 @@ export interface UserModel {
   password: string
   status: UserStatus
   grades: Grade[]
+  token: string
+  createdAt: number
 }
 
 const UserSchema = new mongoose.Schema(

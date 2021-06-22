@@ -28,7 +28,7 @@ export default class ProjectController {
     const validatedProjectData = this.service.validateProjectData(
       projectData,
       true,
-    ) as null | Omit<Project, '_id'>
+    ) as null | mongoose.Document
     if (validatedProjectData === null)
       res
         .status(400)

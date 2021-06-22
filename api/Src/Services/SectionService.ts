@@ -9,13 +9,13 @@ export default class SectionService {
     this.sectionRepository = sectionRepository
   }
 
-  getSections = async (): Promise<(Section & mongoose.Document<Section>)[]> => {
+  getSections = async (): Promise<mongoose.Document[]> => {
     return this.sectionRepository.getAll()
   }
 
   getSectionsByCourseId = async (
     courseId: mongoose.Types.ObjectId,
-  ): Promise<(Section & mongoose.Document<Section>)[]> => {
+  ): Promise<mongoose.Document[]> => {
     return this.sectionRepository.getSectionsByCourseId(courseId)
   }
 
@@ -23,18 +23,22 @@ export default class SectionService {
     return this.sectionRepository.getById(sectionId)
   }
 
-  createSection = async (section: Section & mongoose.Document<Section>) => {
+  createSection = async (section: Section & mongoose.Document) => {
     return this.sectionRepository.create(section)
   }
 
   updateSection = async (
     id: mongoose.Types.ObjectId,
-    section: Section & mongoose.Document<Section>,
+    section: mongoose.Document,
   ) => {
     return this.sectionRepository.updateById(id, section)
   }
 
   deleteSection = async (sectionId: mongoose.Types.ObjectId) => {
     return this.sectionRepository.deleteById(sectionId)
+  }
+
+  getSectionWithCourse = async (id: mongoose.Types.ObjectId) => {
+    return (await this.sectionRepository.getById(id)).populate('courseId')
   }
 }

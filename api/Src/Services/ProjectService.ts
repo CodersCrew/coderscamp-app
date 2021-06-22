@@ -9,7 +9,9 @@ class ProjectService {
   }
 
   async getProjects(courseId: string) {
-    const projects = this.projectRepository.getAllByCourse(courseId)
+    const projects = this.projectRepository.getAllByCourse(
+      mongoose.Types.ObjectId(courseId),
+    )
 
     return (await projects).map<ProjectDto>((p) => ({
       id: p._id,
@@ -25,7 +27,7 @@ class ProjectService {
     return this.projectRepository.getById(id)
   }
 
-  async createProject(validatedProjectData: Omit<Project, '_id'>) {
+  async createProject(validatedProjectData: mongoose.Document<Project>) {
     return this.projectRepository.create(validatedProjectData)
   }
 

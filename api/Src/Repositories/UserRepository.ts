@@ -3,7 +3,9 @@ import { UserModel, UserStatus, UserType } from '../Models/User'
 import * as mongoose from 'mongoose'
 import { GradeType } from '../Models/Grade'
 
-export default class UserRepository extends Repository {
+export default class UserRepository extends Repository<
+  UserModel & mongoose.Document
+> {
   async getByEmail(email: string) {
     return this.model.findOne({ email })
   }

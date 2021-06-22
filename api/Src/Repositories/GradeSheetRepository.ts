@@ -2,7 +2,9 @@ import { GradeSheet } from '../Models/GradeSheet'
 import { Repository } from './Repository'
 import * as mongoose from 'mongoose'
 
-export default class GradeSheetRepository extends Repository {
+export default class GradeSheetRepository extends Repository<
+  GradeSheet & mongoose.Document
+> {
   async getParticipantGradeSheets(
     userId: mongoose.Types.ObjectId,
   ): Promise<GradeSheet[]> {
